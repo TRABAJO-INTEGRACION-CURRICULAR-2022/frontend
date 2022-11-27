@@ -40,7 +40,7 @@ const jsonDataInformacion = [
     valor: "valor4",
   },
 ];
-const Home = () => {
+const Inicio = () => {
   const [data, setData] = useState([]);
   const [dataConsentimiento, setDataConsentimiento] = useState({});
   const [dataInformacion, setDataInformacion] = useState({});
@@ -134,4 +134,4 @@ const Home = () => {
   return <>{mostrarInformacion ? verDatos() : informacion()}</>;
 };
 
-export default Home;
+export default Inicio;
