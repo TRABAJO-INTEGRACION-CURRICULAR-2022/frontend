@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import Informacion from "./Informacion";
-import VerInformacion from "./VerInformacion";
+
+import Tratamiento from "./Tratamiento";
 
 const jsonDataConsentimiento = [
   {
@@ -106,26 +107,11 @@ const Inicio = () => {
           <button className="m-2 btn btn btn-primary">Exportar</button>
           <button className="m-2 btn btn-warning">Editar</button>
         </div>
-
-        <div className="container d-flex justify-content-around">
-          <div className="row">
-            <div className="col">
-              <div className="bg-white rounded p-3">
-                <h3>Consentimiento</h3>
-                {jsonDataConsentimiento.map((item) => (
-                  <VerInformacion key={item.tirulo} item={item} />
-                ))}
-              </div>
-            </div>
-            <div className="col">
-              <div className="bg-white rounded p-3">
-                <h3>Informacion</h3>
-                {jsonDataInformacion.map((item) => (
-                  <VerInformacion key={item.tirulo} item={item} />
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="bg-white rounded p-3">
+          <h3>Tratamiento</h3>
+          {jsonDataConsentimiento.map((item) => (
+            <Tratamiento key={item.tirulo} item={item} />
+          ))}
         </div>
       </div>
     );
