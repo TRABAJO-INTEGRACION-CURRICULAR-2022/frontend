@@ -2,99 +2,72 @@ import React, { useState, useEffect } from "react";
 
 import Informacion from "./Informacion";
 
-import Tratamiento from "./Tratamiento";
+import userTratamientosService from "../../../../services/userTratamientos";
+import TratamientoCorreo from "../Correo/TratamientoCorreo";
 
-const jsonDataConsentimiento = [
-  {
-    titulo: "titulo1",
-    valor: "valor1",
-  },
-  {
-    titulo: "titulo2",
-    valor: "valor2",
-  },
-  {
-    titulo: "titulo3",
-    valor: "valor3",
-  },
-  {
-    titulo: "titulo4",
-    valor: "valor4",
-  },
-];
-
-const jsonDataInformacion = [
-  {
-    titulo: "titulo1",
-    valor: "valor1",
-  },
-  {
-    titulo: "titulo2",
-    valor: "valor2",
-  },
-  {
-    titulo: "titulo3",
-    valor: "valor3",
-  },
-  {
-    titulo: "titulo4",
-    valor: "valor4",
-  },
-];
 const Inicio = () => {
   const [data, setData] = useState([]);
-  const [dataConsentimiento, setDataConsentimiento] = useState({});
-  const [dataInformacion, setDataInformacion] = useState({});
+  const [tratamiento, setTratamiento] = useState({});
+  const [datatratamiento, setDatatratamiento] = useState({});
 
   const [mostrarInformacion, setMostrarInformacion] = useState(false);
 
   useEffect(() => {
-    const jsonData = [
-      {
-        id: 1,
-        nombreEmpresa: "Empresa 1",
-        fechaCaducidad: "2021-01-01",
-      },
-      {
-        id: 2,
-        nombreEmpresa: "Empresa 2",
-        fechaCaducidad: "2021-01-01",
-      },
-      {
-        id: 3,
-        nombreEmpresa: "Empresa 3",
-        fechaCaducidad: "2021-01-01",
-      },
-    ];
-
-    setData(jsonData);
+    userTratamientosService.getAll().then((tratamientos) => {
+      setData(tratamientos);
+      console.log("tratamientos: ", tratamientos);
+    });
   }, []);
 
   const handleVerDatos = (id) => {
-    console.log(id);
-    setMostrarInformacion(true);
+    console.log("idTreatement", id);
+    userTratamientosService.getOne(id).then((tratamiento) => {
+      setTratamiento(tratamiento);
+      console.log("tratamiento: ", tratamiento);
+      setDatatratamiento(tratamiento.data);
+      console.log("tratamiento.data: ", tratamiento.data);
+      let objectData = {};
+
+      tratamiento.data.forEach((tratamiento) => {
+        const newData = {
+          [tratamiento.tipo]: tratamiento.valor,
+        };
+        objectData = { ...objectData, ...newData };
+      });
+      setDatatratamiento(objectData);
+      console.log("newDataCorreo: ", objectData);
+      setMostrarInformacion(true);
+    });
   };
 
-  const informacion = () => {
-    return (
-      <div>
-        <h1>Home</h1>
-        <div className="d-flex justify-content-around"></div>
-        {data.map((item) => (
-          <Informacion
-            key={item.id}
-            item={item}
-            handleVerDatos={handleVerDatos}
-          />
-        ))}
-      </div>
-    );
+  const arrayRechazoPermisos = [];
+
+  const handleRechazarTratamiento = (idTratamiento) => {
+    console.log("idTratamiento: ", idTratamiento);
+    arrayRechazoPermisos.push(idTratamiento);
+    console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
+  };
+  const handleCancelarTratamiento = (idTratamiento) => {
+    console.log("idTratamiento: ", idTratamiento);
+    const index = arrayRechazoPermisos.indexOf(idTratamiento);
+    arrayRechazoPermisos.splice(index, 1);
+    console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
+  };
+  const handleRechazarTodoSolicituTratamiento = () => {
+    console.log("rechazar todo de: ", tratamiento._id);
+    setMostrarInformacion(false);
   };
 
-  const verDatos = (id) => {
+  const handleNewDataTratamiento = (data) => {
+    const newData = { ...datatratamiento, ...data };
+    setDatatratamiento(newData);
+    console.log("newDataCorreo: ", newData);
+  };
+
+  const verInformacion = () => {
     return (
       <div>
-        <h1>Ver datos</h1>
+        <h1>Informacion</h1>
         <div className="p-3 d-flex justify-content-end ">
           <button
             className="m-2 btn btn-secondary"
@@ -104,20 +77,80 @@ const Inicio = () => {
           >
             Cancelar
           </button>
-          <button className="m-2 btn btn btn-primary">Exportar</button>
-          <button className="m-2 btn btn-warning">Editar</button>
+          <button
+            className="m-2 btn btn-danger"
+            onClick={() => handleRechazarTodoSolicituTratamiento()}
+          >
+            Rechazar Todo
+          </button>
         </div>
-        <div className="bg-white rounded p-3">
-          <h3>Tratamiento</h3>
-          {jsonDataConsentimiento.map((item) => (
-            <Tratamiento key={item.tirulo} item={item} />
-          ))}
+        <div className="container">
+          <div className="row">
+            <div className="col-6">
+              <div className="bg-white rounded p-3">
+                <h3>Tratamiento</h3>
+                {tratamiento.permisos.map((item, index) => (
+                  <TratamientoCorreo
+                    key={index}
+                    item={item}
+                    handleRechazarTratamiento={handleRechazarTratamiento}
+                    handleCancelarTratamiento={handleCancelarTratamiento}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="bg-white rounded p-3">
+                <h3>Datos Necesarios</h3>
+                {tratamiento.data.map((itemData, itemDataIndex) => (
+                  <div
+                    key={itemDataIndex}
+                    className="container d-flex  flex-row"
+                  >
+                    <div className="bg-light rounded p-3 ">
+                      <label htmlFor={itemDataIndex}>{itemData.tipo}: </label>
+                      <input
+                        id={itemDataIndex}
+                        name={itemDataIndex}
+                        value={datatratamiento[itemData.tipo]}
+                        onChange={(e) => {
+                          handleNewDataTratamiento({
+                            [itemData.tipo]: e.target.value,
+                          });
+                        }}
+                      ></input>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3 d-flex justify-content-end ">
+          <button className="m-2 btn btn-primary">Aceptar</button>
         </div>
       </div>
     );
   };
 
-  return <>{mostrarInformacion ? verDatos() : informacion()}</>;
+  const informacion = () => {
+    return (
+      <div>
+        <h1>Home</h1>
+        <div className="d-flex justify-content-around"></div>
+        {data.map((item) => (
+          <Informacion
+            key={item._id}
+            item={item}
+            handleVerDatos={handleVerDatos}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  return <>{mostrarInformacion ? verInformacion() : informacion()}</>;
 };
 
 export default Inicio;

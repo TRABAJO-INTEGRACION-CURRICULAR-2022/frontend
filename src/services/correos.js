@@ -14,8 +14,20 @@ const setId = (newId) => {
 };
 
 const getAll = async () => {
-  const response = await axios.get(`${baseUrl}/${id}`);
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("token", token);
+  const response = await axios.get(`${baseUrl}/${id}`, config);
   return response.data;
 };
 
-export default { getAll, setId, setToken };
+const rechazarTodo = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("se ha rechazado todo para: ", id);
+  return "ok";
+};
+
+export default { getAll, setId, setToken, rechazarTodo };

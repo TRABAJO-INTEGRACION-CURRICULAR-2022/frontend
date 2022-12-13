@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import loginService from "./services/logins";
 import correosService from "./services/correos";
+import userTratamientosService from "./services/userTratamientos";
 
 import Navbar from "./components/parts/Navbar";
 import Home from "./components/pages/Home";
@@ -22,6 +23,9 @@ function App() {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       correosService.setId(user.id);
+      correosService.setToken(user.token);
+      userTratamientosService.setId(user.id);
+      userTratamientosService.setToken(user.token);
       console.log("usuario Logeado: ", user);
     } else {
       console.log("no hay usuario logueado");
