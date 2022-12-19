@@ -1,5 +1,6 @@
 import axios from "axios";
-const baseUrl = "http://localhost:8000/api/users/emails";
+const baseUrl1 = "http://localhost:8000/api/users/emails";
+const baseUrl2 = "http://localhost:8000/api/users/email";
 
 let token = null;
 let id = null;
@@ -18,7 +19,16 @@ const getAll = async () => {
     headers: { Authorization: token },
   };
   console.log("token", token);
-  const response = await axios.get(`${baseUrl}/${id}`, config);
+  const response = await axios.get(`${baseUrl1}/${id}`, config);
+  return response.data;
+};
+
+const getOne = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("token", token);
+  const response = await axios.get(`${baseUrl2}/${id}`, config);
   return response.data;
 };
 
@@ -30,4 +40,4 @@ const rechazarTodo = async (id) => {
   return "ok";
 };
 
-export default { getAll, setId, setToken, rechazarTodo };
+export default { getAll, setId, setToken, rechazarTodo, getOne };

@@ -4,7 +4,6 @@ const TratamientoCorreo = ({
   item,
   handleRechazarTratamiento,
   handleCancelarTratamiento,
-  datatratamiento,
 }) => {
   const [disableButton, setDisableButton] = useState(false);
 
@@ -27,9 +26,10 @@ const TratamientoCorreo = ({
             className="m-2 btn btn-secondary"
             disabled={!disableButton}
             onClick={() => {
-              handleCancelarTratamiento(item.tipo);
+              handleCancelarTratamiento(item._id);
               setDisableButton(false);
             }}
+            hidden={!disableButton}
           >
             Cancelar
           </button>
@@ -37,7 +37,7 @@ const TratamientoCorreo = ({
             className="m-2 btn btn-danger"
             disabled={disableButton}
             onClick={() => {
-              handleRechazarTratamiento(item.tipo);
+              handleRechazarTratamiento(item._id);
               setDisableButton(true);
             }}
           >

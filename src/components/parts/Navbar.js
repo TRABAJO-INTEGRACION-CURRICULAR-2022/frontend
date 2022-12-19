@@ -49,6 +49,7 @@ export default function Navbar({ user }) {
               className="nav-link active"
               onClick={() => {
                 window.localStorage.removeItem("loggedBlogappUser");
+                window.localStorage.removeItem("loggedBlogappEmpresa");
                 window.location.reload();
               }}
             >

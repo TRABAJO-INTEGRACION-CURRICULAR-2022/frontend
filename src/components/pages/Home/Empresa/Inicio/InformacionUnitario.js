@@ -1,6 +1,6 @@
 import React from "react";
 
-const Informacion = ({ item, handleVerDatos }) => {
+const InformacionUnitario = ({ item, handleVerDatos }) => {
   return (
     <div className="d-flex justify-content-evenly bg-white rounded p-3 mb-2">
       <p>{item.name}</p>
@@ -15,4 +15,4 @@ const Informacion = ({ item, handleVerDatos }) => {
   );
 };
 
-export default Informacion;
+export default InformacionUnitario;
