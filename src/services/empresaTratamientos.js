@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl1 = "http://localhost:8000/api/users/getTreatmentsEnterprises";
-const baseUrl2 = "http://localhost:8000/api/users/getTreatmentEnterprise";
+const baseUrl1 = "http://localhost:8000/api/enterprises/getUsers";
+const baseUrl2 = "http://localhost:8000/api/enterprises/getUserConsent";
 
 let token = null;
 let idUser = null;

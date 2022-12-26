@@ -19,6 +19,7 @@ import CorreoUsuario from "./components/pages/Home/Usuario/Correo/Correo";
 
 import InicioEmpresa from "./components/pages/Home/Empresa/Inicio/Inicio";
 import CorreoEmpresa from "./components/pages/Home/Empresa/Correo/Correo";
+import Tratamientos from "./components/pages/Home/Empresa/Tratamientos/Tratamientos";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -102,6 +103,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/inicio" element={<InicioUsuario />} />
           <Route path="/correo" element={<CorreoUsuario />} />
+          <Route path="/tratamientos" element={<Tratamientos />} />
         </>
       );
     } else {
@@ -111,6 +113,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/inicio" element={<InicioEmpresa />} />
           <Route path="/correo" element={<CorreoEmpresa />} />
+          <Route path="/tratamientos" element={<Tratamientos />} />
         </>
       );
     }
