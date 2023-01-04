@@ -44,15 +44,6 @@ export default function Navbar({ user }) {
                   Correo
                 </a>
               </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link active"
-                  aria-current="page"
-                  href="tratamientos"
-                >
-                  Tratamientos
-                </a>
-              </li>
             </ul>
             <button
               className="nav-link active"

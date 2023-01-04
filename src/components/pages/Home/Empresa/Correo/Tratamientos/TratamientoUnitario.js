@@ -1,15 +1,15 @@
 const TratamientoUnitario = ({ tratamiento, handleEditarTratamiento }) => {
-  const { nombre, descripcion, data } = tratamiento;
+  const { name, description, data } = tratamiento;
 
   return (
     <div>
       <div className="row">
         <p className="col fw-bold">Titulo Tratamiento: </p>
-        <p className="col">{nombre}</p>
+        <p className="col">{name}</p>
       </div>
       <div className="row">
         <p className="col fw-bold">Descripcion: </p>
-        <p className="col">{descripcion}</p>
+        <p className="col">{description}</p>
       </div>
       <div className="row">
         <p className="col fw-bold">Data Usada: </p>

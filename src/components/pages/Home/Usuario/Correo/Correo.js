@@ -3,9 +3,12 @@ import correosService from "../../../../../services/userCorreos";
 import CorreoUnitario from "./CorreoUnitario";
 import TratamientoCorreo from "./TratamientoCorreo";
 
+import { opciones } from "./data";
+
 const Correo = () => {
   const [correos, setCorreos] = useState([]);
   const [correo, setCorreo] = useState([]);
+  const [neededData, setNeededData] = useState([]);
 
   const [datatratamiento, setDatatratamiento] = useState({});
   const [datatratamientoOriginal, setDatatratamientoOriginal] = useState({});
@@ -13,8 +16,11 @@ const Correo = () => {
   const [permisosTratamiento, setPermisosTratamiento] = useState([]);
 
   const [mostrarInformacion, setMostrarInformacion] = useState(false);
+  const [mostrarInformacion2, setMostrarInformacion2] = useState(false);
 
   const [fechaFin, setFechaFin] = useState("");
+
+  const [textoBoton, setTextoBoton] = useState("Siguiente");
 
   useEffect(() => {
     correosService.getAll().then((correos) => {
@@ -38,7 +44,12 @@ const Correo = () => {
       console.log("permisosTratamiento: ", correo.permisos);
       console.log("permisosTratamiento original: ", correo.permisos);
       setMostrarInformacion(true);
-      setFechaFin(correo.fechaFin);
+      const fechaArray = correo.fechaFin.split("/");
+
+      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
+      console.log("fechaFinTratamiento: ", fechaFinTratamiento);
+      setFechaFin(fechaFinTratamiento);
+      console.log("correo: ", correo);
     });
     // console.log("correo a mostrar: ", correo);
     // setMostrarInformacion(true);
@@ -94,114 +105,172 @@ const Correo = () => {
     });
   };
 
+  const handleSiguiente = () => {
+    setTextoBoton("Aceptar");
+    setMostrarInformacion2(true);
+    let newNeededData = [];
+    permisosTratamiento.forEach((permiso) => {
+      console.log("permiso: ", permiso);
+      if (permiso.valor !== false) {
+        newNeededData = [...newNeededData, ...permiso.data];
+      }
+    });
+    newNeededData = [...new Set(newNeededData)];
+    console.log("Siguiente");
+    console.log("newNeededData", newNeededData);
+    setNeededData(newNeededData);
+  };
+
   const handleAceptarSolitudTratamiento = () => {
     console.log(`Aceptar de : ${correo._id}`);
     console.log("permisosTratamiento: ", permisosTratamiento);
-    const newCorreo = { ...correo, respondido: true };
-    const newCorreos = correos.map((correo) => {
-      if (correo._id === newCorreo._id) {
-        return newCorreo;
-      } else {
-        return correo;
-      }
+    console.log("correo: ", correo);
+
+    console.log("dataNecesaria: ", neededData);
+
+    const dataEnviar = neededData.map((data) => {
+      const objetoData = {
+        tipo: data,
+        value: datatratamiento[data],
+      };
+
+      return objetoData;
     });
-    setCorreos(newCorreos);
-    //falta decir a correos que cambio el correo
-    setCorreo([]);
-    setPermisosTratamiento([]);
-    setMostrarInformacion(false);
+
+    console.log("dataEnviar: ", dataEnviar);
+
+    const enviarSolicitud = {
+      data: dataEnviar,
+      permisos: permisosTratamiento,
+    };
+
+    console.log("enviarSolicitud: ", enviarSolicitud);
+
+    // const newCorreo = { ...correo, respondido: true };
+    // const newCorreos = correos.map((correo) => {
+    //   if (correo._id === newCorreo._id) {
+    //     return newCorreo;
+    //   } else {
+    //     return correo;
+    //   }
+    // });
+    // setCorreos(newCorreos);
+    // //falta decir a correos que cambio el correo
+    // setCorreo([]);
+    // setPermisosTratamiento([]);
+    // setMostrarInformacion(false);
   };
 
   const handleCancelarVerCorreo = () => {
     setMostrarInformacion(false);
     setDatatratamiento(datatratamientoOriginal);
+    setMostrarInformacion2(false);
+    setTextoBoton("Siguiente");
+  };
+
+  const aceptarORechazarTratamientosP1 = () => {
+    return (
+      <div className="bg-white rounded p-3">
+        <div>
+          <h3>Fecha Fin</h3>
+          <div>
+            <input
+              type={"date"}
+              value={fechaFin}
+              onChange={(e) => {
+                console.log("e.target.value: ", e.target.value);
+                setFechaFin(e.target.value);
+              }}
+            ></input>
+          </div>
+        </div>
+        <h3>Tratamiento Solicitud</h3>
+        {correo.permisos.map((item, index) => (
+          <TratamientoCorreo
+            key={index}
+            item={item}
+            handleRechazarTratamiento={handleRechazarTratamiento}
+            handleCancelarTratamiento={handleCancelarTratamiento}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const aceptarORechazarTratamientosP2 = () => {
+    console.log("aceptarORechazarTratamientos");
+    return (
+      <div className="bg-white rounded p-3">
+        <h3>Datos Necesarios</h3>
+        <form>
+          {neededData.map((itemData, itemDataIndex) => {
+            //console.log("itemData: ", itemData);
+            return (
+              <div key={itemDataIndex} className="mb-3">
+                <label className="form-label" htmlFor={itemDataIndex}>
+                  {itemData}:{" "}
+                </label>
+                <input
+                  className="form-control"
+                  id={itemDataIndex}
+                  name={itemDataIndex}
+                  value={datatratamiento[itemData]}
+                  onChange={(e) => {
+                    handleNewDataTratamiento({
+                      [itemData]: e.target.value,
+                    });
+                  }}
+                ></input>
+              </div>
+            );
+          })}
+        </form>
+      </div>
+    );
   };
 
   const verCorreo = () => {
     return (
       <div>
         <h2>Empresa: {correo.empresa.name}</h2>
-        <h5>Hora de recibido: {"xx/xx/xx"}</h5>
+        <h5>Hora de recibido: {correo.fechaEnvio}</h5>
         <div className="p-3 d-flex justify-content-end ">
-          <button
-            className="m-2 btn btn-secondary"
-            onClick={() => {
-              handleCancelarVerCorreo();
-            }}
-          >
-            Cancelar
-          </button>
-          <button
-            className="m-2 btn btn-danger"
-            onClick={() => handleRechazarTodoSolicituTratamiento("1")}
-          >
-            Rechazar Todo
-          </button>
-        </div>
-        <div className="container">
-          <div className="row">
-            <div className="col-6">
-              <div className="bg-white rounded p-3">
-                <div>
-                  <h3>Fecha Fin</h3>
-                  <div>
-                    <input
-                      type={"date"}
-                      value={fechaFin}
-                      onChange={(e) => {
-                        console.log("e.target.value: ", e.target.value);
-                        setFechaFin(e.target.value);
-                      }}
-                    ></input>
-                  </div>
-                </div>
-                <h3>Tratamiento Solicitud</h3>
-                {correo.permisos.map((item, index) => (
-                  <TratamientoCorreo
-                    key={index}
-                    item={item}
-                    handleRechazarTratamiento={handleRechazarTratamiento}
-                    handleCancelarTratamiento={handleCancelarTratamiento}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="col-6">
-              <div className="bg-white rounded p-3">
-                <h3>Datos Necesarios</h3>
-                {correo.data.map((itemData, itemDataIndex) => (
-                  <div
-                    key={itemDataIndex}
-                    className="container d-flex  flex-row"
-                  >
-                    <div className="bg-light rounded p-3 ">
-                      <label htmlFor={itemDataIndex}>{itemData.tipo}: </label>
-                      <input
-                        id={itemDataIndex}
-                        name={itemDataIndex}
-                        value={datatratamiento[itemData.tipo]}
-                        onChange={(e) => {
-                          handleNewDataTratamiento({
-                            [itemData.tipo]: e.target.value,
-                          });
-                        }}
-                      ></input>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="btn-group">
+            <button
+              className=" btn btn-secondary"
+              onClick={() => {
+                handleCancelarVerCorreo();
+              }}
+            >
+              Cancelar
+            </button>
+
+            <button
+              className=" btn btn-danger"
+              onClick={() => handleRechazarTodoSolicituTratamiento("1")}
+            >
+              Rechazar Todo
+            </button>
           </div>
+        </div>
+        <div className="bg-white rounded p-3 mb-2">
+          {mostrarInformacion2
+            ? aceptarORechazarTratamientosP2()
+            : aceptarORechazarTratamientosP1()}
         </div>
 
         <div className="p-3 d-flex justify-content-end ">
           <button
             className="m-2 btn btn-primary"
             onClick={() => {
-              handleAceptarSolitudTratamiento();
+              if (!mostrarInformacion2) {
+                handleSiguiente();
+              } else {
+                handleAceptarSolitudTratamiento(); //Boris
+              }
             }}
           >
-            Aceptar
+            {textoBoton}
           </button>
         </div>
       </div>
@@ -215,7 +284,7 @@ const Correo = () => {
           {correos.map((correo) => {
             return (
               <CorreoUnitario
-                key={correo._id}
+                key={correo.id}
                 correo={correo}
                 handleVerCorreo={handleVerCorreo}
               />

@@ -6,11 +6,10 @@ import { opciones } from "./data";
 const CrearTratamiento = ({ handleNuevoTratamiento }) => {
   const [nombreTratamiento, setNombreTratamiento] = useState("");
   const [descripcionTratamiento, setDescripcionTratamiento] = useState("");
-  const [dataUsada, setDataUsada] = useState({});
+  const [dataUsada, setDataUsada] = useState(null);
 
   return (
     <div>
-      <h1>Crear Tratamiento</h1>
       <div className="bg-white rounded p-3 mb-2">
         <div className="row">
           <label className="col" htmlFor="nombreTratamiento">

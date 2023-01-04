@@ -3,32 +3,17 @@ import React, { useState, useEffect } from "react";
 import TratamientoUnitario from "./TratamientoUnitario";
 import CrearTratamiento from "./CrearTratamiento";
 
+import empresaService from "../../../../../../services/empresaCorreos";
+
 const Tratamientos = () => {
-  const jsonTratamientos = [
-    {
-      nombre: "Tratamiento 1",
-      descripcion: "Descripcion del tratamiento 1",
-      data: [
-        {
-          value: "data1",
-          label: "Data 1",
-        },
-        {
-          value: "data2",
-          label: "Data 2",
-        },
-      ],
-    },
-  ];
   const [crearTratamiento, setCrearTratamiento] = useState(false);
   const [tratamientos, setTratamientos] = useState([]);
 
   useEffect(() => {
-    setTratamientos(jsonTratamientos);
-    // empresaService.getAllTratamientos().then((tratamientoResponse) => {
-    //   //console.log("tratamientos: ", tratamientoResponse)
-    //   //setTratamientos(tratamientoResponse);
-    // });
+    empresaService.getAllTreatments().then((tratamientoResponse) => {
+      console.log("tratamientos: ", tratamientoResponse);
+      setTratamientos(tratamientoResponse);
+    });
   }, []);
 
   const handleNuevoTratamiento = (tratamientoObjeto) => {
@@ -50,15 +35,19 @@ const Tratamientos = () => {
       <div>
         <div>
           <div className="bg-white rounded p-3 mb-2">
-            {tratamientos.map((tratamiento) => {
-              return (
+            {tratamientos.length > 0 ? (
+              tratamientos.map((tratamiento) => (
                 <TratamientoUnitario
-                  key={tratamiento.nombre}
+                  key={tratamiento._id}
                   tratamiento={tratamiento}
                   handleEditarTratamiento={handleEditarTratamiento}
                 />
-              );
-            })}
+              ))
+            ) : (
+              <div>
+                <h3>No hay tratamientos</h3>
+              </div>
+            )}
           </div>
         </div>
         ;
@@ -68,16 +57,20 @@ const Tratamientos = () => {
 
   return (
     <div>
-      <h1>Tratamientos</h1>
       <div>
-        <button
-          hidden={crearTratamiento}
-          onClick={() => {
-            handleNuevoTratamiento();
-          }}
-        >
-          Nuevo Tratamiento
-        </button>
+        <div className="d-flex justify-content-end">
+          <button
+            className="btn btn-primary"
+            hidden={crearTratamiento}
+            onClick={() => {
+              handleNuevoTratamiento();
+            }}
+          >
+            Nuevo Tratamiento
+          </button>
+        </div>
+
+        <h1>Tratamientos</h1>
       </div>
       {crearTratamiento ? (
         <CrearTratamiento handleNuevoTratamiento={handleNuevoTratamiento} />

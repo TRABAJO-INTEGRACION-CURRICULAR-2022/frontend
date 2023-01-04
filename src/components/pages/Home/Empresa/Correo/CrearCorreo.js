@@ -24,53 +24,104 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
     data: "",
     valor: true,
   };
+
   const [tratamientos, setTratamientos] = useState([tratamientoVacío]);
   const [email, setEmail] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
+  //useeffect listar tratamientos
+
+  // useEffect(() => {
+  //   setTratamientos(tratamientos);
+  // }, [tratamientos]);
+
   const handleNuevoTratamiento = (nuevoTratamiento) => {
     //console.log("nuevoTratamiento", nuevoTratamiento);
     setTratamientos([...tratamientos, nuevoTratamiento]);
   };
 
-  const handleEliminarTratamiento = (id) => {
-    console.log("tratamientos eliminados", tratamientos);
-    console.log("indexAeliminar", id);
-    const tratamientosFiltrados = tratamientos.filter((item) => {
-      return item.id !== id;
-    });
-    console.log("tratamientosFiltrados", tratamientosFiltrados);
-    setTratamientos(tratamientosFiltrados);
-  };
-
   const handleEnviarCorreo = () => {
+    const newPermisos = tratamientos.map((tratamiento) => {
+      if (tratamiento._id) {
+        return tratamiento;
+      } else {
+        return null;
+      }
+    });
+
+    const soloPermisos = newPermisos.filter(
+      (tratamiento) => tratamiento !== null
+    );
+    //eliminar repetidos
+    const sinRepetidospermisos = soloPermisos.filter(
+      (tratamiento, index, self) =>
+        index === self.findIndex((t) => t._id === tratamiento._id)
+    );
+    //
+
+    const permisosEnviar = sinRepetidospermisos.map((tratamiento) => {
+      const arrayValues = tratamiento.data.map((data) => {
+        return data.value;
+      });
+      const permiso = {
+        tipo: tratamiento.name,
+        descripcion: tratamiento.description,
+        valor: tratamiento.valor,
+        data: arrayValues,
+      };
+      return permiso;
+    });
+
+    const formatoFechaFin = () => {
+      const fecha = new Date(fechaFin);
+      const dia = fecha.getDate();
+      const mes = fecha.getMonth();
+      const año = fecha.getFullYear();
+      const fechaFinFormato = `${dia + 1}/${mes + 1}/${año}`;
+      return fechaFinFormato;
+    };
+
     const data = {
       email: email,
       descripcionConsentimeinto: descripcion,
-      permisos: tratamientos,
-      fechaFin: fechaFin,
+      permisos: permisosEnviar,
+      fechaFin: formatoFechaFin(),
+      observaciones: observaciones,
     };
     console.log("handleEnviarCorreo", data);
   };
 
   const handleEditarTratamiento = (tratamiento) => {
-    console.log("tratamiento", tratamiento);
-    const tratamientosEditados = tratamientos.map((item) => {
-      if (item.id === tratamiento.id) {
-        return tratamiento;
-      } else {
-        return item;
-      }
-    });
-    setTratamientos(tratamientosEditados);
+    const newArrayTratamientos = [...tratamientos, tratamiento];
+    setTratamientos(newArrayTratamientos);
+    console.log("Array - tratamientoa: ", newArrayTratamientos);
+  };
+  const handleEliminarTratamiento = (id) => {
+    console.log("tratamientos antes de eliminar: ", tratamientos);
+    const newArrayTratamientos = tratamientos.filter(
+      (tratamiento) => tratamiento._id !== id
+    );
+    setTratamientos(newArrayTratamientos);
+    console.log("tratamientos despues de eliminar: ", newArrayTratamientos);
   };
 
   return (
     <div>
       <h1>Crear Correo</h1>
-      <button onClick={() => handleNuevoCorreo()}>Cancelar</button>
+      <button
+        onClick={() => {
+          handleNuevoCorreo();
+          setTratamientos([tratamientoVacío]);
+          setDescripcion("");
+          setFechaFin("");
+          setObservaciones("");
+          setEmail("");
+        }}
+      >
+        Cancelar
+      </button>
       <button onClick={() => handleEnviarCorreo()}>Enviar Correo</button>
       <div className="row">
         <label className="col" htmlFor="nombre">
@@ -118,9 +169,9 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
       </div>
       <hr className="bg-danger border-2 border-top border-dark" />
       {tratamientos.map((item, index) => {
-        console.log("item", item);
-        console.log("index", index);
-        console.log("------------------");
+        //console.log("item", item);
+        //console.log("index", index);
+        //console.log("------------------");
         return (
           <div key={index}>
             <FormularioTratamiento
@@ -133,9 +184,10 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
         );
       })}
       <button
-        onClick={() => {
-          handleNuevoTratamiento({ ...tratamientoVacío, id: idGenerator() });
-        }}
+        onClick={() =>
+          handleNuevoTratamiento({ ...tratamientoVacío, id: idGenerator() })
+        }
+        className="btn btn-primary"
       >
         Crear +
       </button>

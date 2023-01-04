@@ -17,6 +17,8 @@ const Inicio = () => {
   const [mostrarInformacion, setMostrarInformacion] = useState(false);
   const [editar, setEditar] = useState(false);
 
+  const [fechaFin, setFechaFin] = useState("");
+
   useEffect(() => {
     userTratamientosService.getAll().then((tratamientos) => {
       setData(tratamientos);
@@ -43,6 +45,12 @@ const Inicio = () => {
       setDatatratamientoOriginal(objectData);
       console.log("newDataCorreo: ", objectData);
       setMostrarInformacion(true);
+
+      const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
+
+      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
+      //console.log("fechaFinTratamiento: ", fechaFinTratamiento);
+      setFechaFin(fechaFinTratamiento);
     });
   };
 
@@ -88,34 +96,39 @@ const Inicio = () => {
         <h2>Empresa: {tratamiento.empresa.name}</h2>
         <div className="p-3 d-flex justify-content-end ">
           {editar ? (
-            <div>
+            <div className="btn-group">
               <button
-                className="m-2 btn btn-secondary"
+                className="btn btn-secondary"
                 onClick={() => {
                   handleCancelarEdicion();
                 }}
               >
                 Cancelar Edición
               </button>
-              <button className="m-2 btn btn-danger" onClick={() => {}}>
+              <button className="btn btn-danger" onClick={() => {}}>
                 Rechazar Todos los Tratamientos
               </button>
             </div>
           ) : (
-            <div>
+            <div className="btn-group">
               <button
-                className="m-2 btn btn-secondary"
+                className="btn btn-secondary"
                 onClick={() => {
                   setMostrarInformacion(false);
                 }}
               >
                 Cancelar
               </button>
-              <button className="m-2 btn btn-primary" onClick={() => {}}>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  console.log("exportar");
+                }}
+              >
                 Exportar
               </button>
               <button
-                className="m-2 btn btn-warning"
+                className="btn btn-warning"
                 onClick={() => {
                   handleBotonEditar();
                 }}
@@ -130,6 +143,19 @@ const Inicio = () => {
             <div className="col-6">
               <div className="bg-white rounded p-3">
                 <h3>Tratamiento</h3>
+                <h3>Fecha Fin</h3>
+                <div>
+                  <input
+                    type={"date"}
+                    value={fechaFin}
+                    disabled={!editar}
+                    onChange={(e) => {
+                      console.log("e.target.value: ", e.target.value);
+                      setFechaFin(e.target.value);
+                    }}
+                  ></input>
+                </div>
+
                 {tratamiento.permisos.map((item, index) => (
                   <TratamientoInformacion
                     key={index}
@@ -144,14 +170,14 @@ const Inicio = () => {
             <div className="col-6">
               <div className="bg-white rounded p-3">
                 <h3>Datos Necesarios</h3>
-                {tratamiento.data.map((itemData, itemDataIndex) => (
-                  <div
-                    key={itemDataIndex}
-                    className="container d-flex  flex-row"
-                  >
-                    <div className="bg-light rounded p-3 ">
-                      <label htmlFor={itemDataIndex}>{itemData.tipo}: </label>
+                <form>
+                  {tratamiento.data.map((itemData, itemDataIndex) => (
+                    <div key={itemDataIndex} className="mb-3">
+                      <label className="form-label" htmlFor={itemDataIndex}>
+                        {itemData.tipo}:{" "}
+                      </label>
                       <input
+                        className="form-control"
                         id={itemDataIndex}
                         name={itemDataIndex}
                         value={datatratamiento[itemData.tipo]}
@@ -163,8 +189,8 @@ const Inicio = () => {
                         readOnly={!editar}
                       ></input>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </form>
               </div>
             </div>
           </div>
@@ -184,13 +210,19 @@ const Inicio = () => {
       <div>
         <h1>Home</h1>
         <div className="d-flex justify-content-around"></div>
-        {data.map((item) => (
-          <InformacionUnitario
-            key={item._id}
-            item={item}
-            handleVerDatos={handleVerDatos}
-          />
-        ))}
+        {data.length > 0 ? (
+          data.map((item) => (
+            <InformacionUnitario
+              key={item._id}
+              item={item}
+              handleVerDatos={handleVerDatos}
+            />
+          ))
+        ) : (
+          <div className="alert alert-warning" role="alert">
+            No existen Tratamientos por el momento
+          </div>
+        )}
       </div>
     );
   };

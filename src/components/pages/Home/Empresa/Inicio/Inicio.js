@@ -14,6 +14,8 @@ const Inicio = () => {
 
   const [tratamientoSolicitado, setTratamientoSolicitado] = useState({});
 
+  const [fechaFin, setFechaFin] = useState("");
+
   useEffect(() => {
     empresaTratamientosService.getAll().then((tratamientos) => {
       setData(tratamientos);
@@ -39,6 +41,11 @@ const Inicio = () => {
       setDataTratamiento(dataTratamientoTemporal);
       console.log("dataTratamientoTemporal: ", dataTratamientoTemporal);
       setMostrarInformacion(true);
+
+      const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
+      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
+      console.log("fechaFinTratamiento: ", fechaFinTratamiento);
+      setFechaFin(fechaFinTratamiento);
     });
   };
 
@@ -67,6 +74,10 @@ const Inicio = () => {
             <div className="col-6">
               <div className="bg-white rounded p-3">
                 <h3>Tratamiento</h3>
+                <h3>Fecha Fin</h3>
+                <div>
+                  <input type={"date"} value={fechaFin} disabled={true}></input>
+                </div>
                 {tratamientoSolicitado.consent.permisos.map(
                   (permiso, index) => (
                     <TratamientoInformacion key={index} item={permiso} />
@@ -77,15 +88,22 @@ const Inicio = () => {
             <div className="col-6">
               <div className="bg-white rounded p-3">
                 <h3>Datos</h3>
-                {tratamientoSolicitado.consent.data.map((itemData, index) => (
-                  <div key={index} className="container d-flex  flex-row">
-                    <div className="bg-light rounded p-3">
-                      <p>
-                        {itemData.tipo}: {dataTratamiento[itemData.tipo]}
-                      </p>
+                <form>
+                  {tratamientoSolicitado.consent.data.map((itemData, index) => (
+                    <div key={index} className="mb-3">
+                      <label className="form-label" htmlFor={index}>
+                        {itemData.tipo}:{" "}
+                      </label>
+                      <input
+                        className="form-control"
+                        id={index}
+                        name={index}
+                        value={dataTratamiento[itemData.tipo]}
+                        readOnly={true}
+                      ></input>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </form>
               </div>
             </div>
           </div>
@@ -99,20 +117,26 @@ const Inicio = () => {
       <div>
         <h1>Tratamientos</h1>
         <div className="d-flex justify-content-around"></div>
-        {data.map((tratamiento) => (
-          <Tratamiento
-            key={tratamiento.id_consent}
-            item={tratamiento}
-            handleVerDatos={handleVerDatos}
-          />
-        ))}
+        {data.length > 0 ? (
+          data.map((tratamiento) => (
+            <Tratamiento
+              key={tratamiento.id_consent}
+              item={tratamiento}
+              handleVerDatos={handleVerDatos}
+            />
+          ))
+        ) : (
+          <div className="alert alert-warning" role="alert">
+            No existen Tratamientos por el momento
+          </div>
+        )}
       </div>
     );
   };
 
   return (
     <div>
-      <h1>InicioO </h1>
+      <h1>Inicio Empresa (*Borrar)</h1>
       {mostrarInformacion ? tratamiento() : tratamientos()}
     </div>
   );

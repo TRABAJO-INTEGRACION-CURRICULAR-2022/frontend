@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { opciones } from "./data";
 
 const TratamientoCorreo = ({
   item,
@@ -6,6 +7,19 @@ const TratamientoCorreo = ({
   handleCancelarTratamiento,
 }) => {
   const [disableButton, setDisableButton] = useState(false);
+
+  const retornarLabel = (value) => {
+    const response = opciones.find((item) => {
+      return item.value === value;
+    });
+    console.log("response: ", response);
+
+    if (response !== undefined) {
+      return response.label;
+    } else {
+      return value;
+    }
+  };
 
   return (
     <div className={disableButton ? "bg-light" : ""}>
@@ -16,7 +30,7 @@ const TratamientoCorreo = ({
           <ul className="list-group list-group-flush">
             {item.data.map((item1, index) => (
               <li key={index} className="list-group-item">
-                {item1}
+                {retornarLabel(item1)}
               </li>
             ))}
           </ul>
