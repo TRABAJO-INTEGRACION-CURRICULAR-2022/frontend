@@ -11,7 +11,7 @@ const Tratamientos = () => {
 
   useEffect(() => {
     empresaService.getAllTreatments().then((tratamientoResponse) => {
-      console.log("tratamientos: ", tratamientoResponse);
+      //console.log("tratamientos: ", tratamientoResponse);
       setTratamientos(tratamientoResponse);
     });
   }, []);
@@ -21,8 +21,12 @@ const Tratamientos = () => {
     console.log("tratamientoObjeto: ", tratamientoObjeto);
     if (tratamientoObjeto) {
       setTratamientos([...tratamientos, tratamientoObjeto]);
+      empresaService.createTreatment(tratamientoObjeto).then((response) => {
+        console.log("response: ", response);
+        console.log("Se ha creado el tratamiento: ", tratamientos);
+      });
     } else {
-      console.log("No se creo el tratamiento");
+      console.log("Error: No se creo el tratamiento");
     }
   };
 
@@ -36,9 +40,9 @@ const Tratamientos = () => {
         <div>
           <div className="bg-white rounded p-3 mb-2">
             {tratamientos.length > 0 ? (
-              tratamientos.map((tratamiento) => (
+              tratamientos.map((tratamiento, index) => (
                 <TratamientoUnitario
-                  key={tratamiento._id}
+                  key={index}
                   tratamiento={tratamiento}
                   handleEditarTratamiento={handleEditarTratamiento}
                 />

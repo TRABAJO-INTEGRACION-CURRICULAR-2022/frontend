@@ -51,8 +51,8 @@ const CrearTratamiento = ({ handleNuevoTratamiento }) => {
           console.log("dataUsada: ", dataUsada);
 
           const tratamientoObjeto = {
-            nombre: nombreTratamiento,
-            descripcion: descripcionTratamiento,
+            name: nombreTratamiento,
+            description: descripcionTratamiento,
             data: dataUsada,
           };
           handleNuevoTratamiento(tratamientoObjeto);

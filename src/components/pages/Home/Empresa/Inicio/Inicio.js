@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 
+import Form from "react-bootstrap/Form";
+import Select from "react-select";
+
 import empresaTratamientosService from "../../../../../services/empresaTratamientos";
+
+import empresaCorreoService from "../../../../../services/empresaCorreos";
 
 import Tratamiento from "./Tratamiento";
 import TratamientoInformacion from "./TratamientoInformacion";
@@ -16,10 +21,48 @@ const Inicio = () => {
 
   const [fechaFin, setFechaFin] = useState("");
 
+  const [filter, setFilter] = useState("Por Persona");
+
+  const [filtroSeleccionado, setFiltroSeleccionado] = useState("Todos");
+
+  const [opcionesFiltro, setOpcionesFiltro] = useState([
+    {
+      value: "Todos",
+      label: "Todos",
+    },
+  ]);
+
+  const [opcionesFitrolPersona, setOpcionesFiltroPersona] = useState([
+    {
+      value: "Todos",
+      label: "Todos",
+    },
+  ]);
+
+  const [opcionesFiltroTratamiento, setOpcionesFiltroTratamiento] = useState(
+    []
+  );
+
   useEffect(() => {
     empresaTratamientosService.getAll().then((tratamientos) => {
       setData(tratamientos);
       console.log("tratamientos recuperados: ", tratamientos);
+      let newOpcionesFiltro = tratamientos.map((tratamiento) => {
+        return {
+          value: tratamiento.id_consent,
+          label: `${tratamiento.name} ${tratamiento.lastname}`,
+        };
+      });
+      console.log("newOpcionesFiltro: ", newOpcionesFiltro);
+      newOpcionesFiltro = [
+        {
+          value: "Todos",
+          label: "Todos",
+        },
+        ...newOpcionesFiltro,
+      ];
+      setOpcionesFiltroPersona(newOpcionesFiltro);
+      setOpcionesFiltro(newOpcionesFiltro);
     });
   }, []);
 
@@ -47,6 +90,53 @@ const Inicio = () => {
       console.log("fechaFinTratamiento: ", fechaFinTratamiento);
       setFechaFin(fechaFinTratamiento);
     });
+  };
+
+  const handleFilter = (valor) => {
+    console.log("e.target.value: ", valor);
+    setFilter(valor);
+
+    if (valor === "Por Persona") {
+      console.log("filtro por persona");
+      setOpcionesFiltro(opcionesFitrolPersona);
+    } else {
+      console.log("filtro por tratamiento");
+      if (opcionesFiltroTratamiento.length > 0) {
+        setOpcionesFiltro(opcionesFiltroTratamiento);
+      } else {
+        empresaCorreoService.getAllTreatments().then((tratamientos) => {
+          console.log("tratamientos: ", tratamientos);
+          const newOpcionesFiltro = tratamientos.map((tratamiento) => {
+            return {
+              value: tratamiento._id,
+              label: tratamiento.name,
+            };
+          });
+          setOpcionesFiltroTratamiento(newOpcionesFiltro);
+          setOpcionesFiltro(newOpcionesFiltro);
+        });
+      }
+    }
+  };
+
+  const handleButtonFiltrar = () => {
+    if (filter === "Por Persona") {
+      console.log("boton filtrar por persona");
+      if (filtroSeleccionado === "Todos") {
+        console.log("entro todos");
+        empresaTratamientosService.getAll().then((tratamientos) => {
+          setData(tratamientos);
+          console.log("tratamientos recuperados: ", tratamientos);
+        });
+      } else {
+        console.log("filtroSeleccionado: ", filtroSeleccionado);
+        handleVerDatos(filtroSeleccionado);
+      }
+    } else {
+      console.log("boton filtrar por Tratamiento");
+      //TODO: filtrar por tratamiento
+      //mostar usuarios que tienen ese tratamiento
+    }
   };
 
   const tratamiento = () => {
@@ -115,6 +205,40 @@ const Inicio = () => {
   const tratamientos = () => {
     return (
       <div>
+        <div>
+          <h1>Filtro: </h1>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Check
+              value="Por Persona"
+              type="radio"
+              label="Por Persona"
+              onChange={(e) => handleFilter(e.target.value)}
+              checked={filter === "Por Persona" ? true : false}
+            />
+            <Form.Check
+              value="Por Tratamiento"
+              type="radio"
+              label="Por Tratamiento"
+              onChange={(e) => handleFilter(e.target.value)}
+              checked={filter === "Por Tratamiento" ? true : false}
+            />
+          </Form.Group>
+          <Select
+            options={opcionesFiltro}
+            onChange={(e) => {
+              console.log("e: ", e);
+              setFiltroSeleccionado(e.value);
+            }}
+          ></Select>
+          <button
+            className="m-2 btn btn-primary"
+            onClick={() => {
+              handleButtonFiltrar();
+            }}
+          >
+            Filtrar
+          </button>
+        </div>
         <h1>Tratamientos</h1>
         <div className="d-flex justify-content-around"></div>
         {data.length > 0 ? (

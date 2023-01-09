@@ -1,56 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { opciones } from "./data";
 
 import empresaService from "../../../../../services/empresaCorreos";
 
 import InformacionTratamiento from "./InformacionTratamiento";
-import Tratamiento from "../Inicio/Tratamiento";
 
 const FormularioTratamiento = ({
   data,
   handleEliminarTratamiento,
   handleEditarTratamiento,
+  opcionesTratamientos,
 }) => {
-  const [tratamientos, setTratamientos] = useState([]);
-  const [opcionesTratamientos, setOpcionesTratamientos] = useState([]);
-
-  const [tratamiento, setTratamiento] = useState({});
-  const [dataUsada, setDataUsada] = useState({});
-
-  useEffect(() => {
-    empresaService.getAllTreatments().then((tratamientoResponse) => {
-      //console.log("tratamientos from: ", tratamientoResponse);
-      setTratamientos(tratamientoResponse);
-      const newOpcionesTratamientos = tratamientoResponse.map((tratamiento) => {
-        return {
-          value: tratamiento._id,
-          label: tratamiento.name,
-        };
-      });
-      setOpcionesTratamientos(newOpcionesTratamientos);
-    });
-
-    console.log("data que vino: ", data);
-    if (data._id) {
-      setDataUsada(data);
-      const tratamientoSeleccionado = tratamientos.find(
-        (tratamiento) => tratamiento._id === data._id
-      );
-      console.log("tratamientoSeleccionado: ", tratamientoSeleccionado);
-      if (tratamientoSeleccionado) {
-        setTratamiento(tratamientoSeleccionado);
-      }
-    }
-  }, [data]);
+  const [dataTratamiento, setDataTratamiento] = useState({});
 
   return (
     <div className="container">
       <button
+        className="btn btn-danger"
         onClick={() => {
-          console.log("data a eliminar id", tratamiento._id);
-          console.log("data a eliminar ", tratamiento);
-          handleEliminarTratamiento(tratamiento._id);
+          //console.log("Tratamiento a eliminar id", idTratamientoSeleccionado);
+          //console.log("data a eliminar ", tratamiento);
+          handleEliminarTratamiento(data.idLista, data._id);
         }}
       >
         Eliminar
@@ -59,25 +29,35 @@ const FormularioTratamiento = ({
         <Select
           options={opcionesTratamientos}
           onChange={(e) => {
-            console.log("e: ", e);
-            const tratamientoSeleccionado = tratamientos.find(
-              (tratamiento) => tratamiento._id === e.value
+            //console.log("e: ", e);
+            empresaService.getOneTreatment(e.value).then(
+              (response) => {
+                //console.log("response get one tratement : ", response);
+                setDataTratamiento(response.treatment);
+                //handleTratamientoAniadidoALaLista(response.treatment);
+                //console.log("que es esta data: ", data);
+                handleEditarTratamiento({
+                  idLista: data.idLista,
+                  ...response.treatment,
+                });
+              },
+              (error) => {
+                console.log("error get one tratement : ", error);
+              }
             );
-            //console.log("tratamientoSeleccionado: ", tratamientoSeleccionado);
 
-            setTratamiento(tratamientoSeleccionado);
-
-            handleEditarTratamiento({
-              ...tratamientoSeleccionado,
-              valor: true,
-            });
+            // handleEditarTratamiento({
+            //   ...tratamientoSeleccionado,
+            //   valor: true,
+            // });
           }}
         ></Select>
         <div>
-          {JSON.stringify(tratamiento) === "{}" ? null : (
-            <InformacionTratamiento tratamiento={tratamiento} />
+          {JSON.stringify(dataTratamiento) === "{}" ? null : (
+            <InformacionTratamiento tratamiento={dataTratamiento} />
           )}
         </div>
+        <div>{JSON.stringify(data.opcionesTratamientos)}</div>
       </div>
 
       <hr className="bg-danger border-2 border-top border-dark" />
@@ -86,26 +66,3 @@ const FormularioTratamiento = ({
 };
 
 export default FormularioTratamiento;
-
-/*
-      <div className="row">
-        <p className="col">Data Usada: </p>
-        <Select
-          options={opciones}
-          isMulti
-          value={dataUsada}
-          onChange={(e) => {
-            console.log("Data Usada: ", e);
-            setDataUsada(e);
-            setTratamiento({
-              ...tratamiento,
-              data: e,
-            });
-            handleEditarTratamiento({
-              ...tratamiento,
-              data: e,
-            });
-          }}
-        ></Select>
-      </div>
-*/

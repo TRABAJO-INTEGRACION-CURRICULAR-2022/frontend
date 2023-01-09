@@ -1,6 +1,9 @@
 import axios from "axios";
-const baseUrl1 = "http://localhost:8000/api/enterprises/createTreatment"; //obtener tratamiento
+const baseUrl1 = "http://localhost:8000/api/enterprises/createTreatment"; //crear tratamiento
 const baseUrl2 = "http://localhost:8000/api/enterprises/getTreatments"; //obtener tratamientos
+const baseUrl3 = "http://localhost:8000/api/enterprises/getTreatment"; //obtener un tratamiento
+
+const baseUrl4 = "http://localhost:8000/api/enterprises/createEmail"; //enviar correo
 
 let token = null;
 let id = null;
@@ -40,7 +43,7 @@ const enviarCorreo = async (correo) => {
     headers: { Authorization: token },
   };
   //console.log("token", token);
-  const response = await axios.post(`${baseUrl2}/${id}`, correo, config);
+  const response = await axios.post(`${baseUrl4}/${id}`, correo, config);
   return response.data;
 };
 
@@ -71,6 +74,16 @@ const getAllTreatments = async () => {
   }
 };
 
+//obtener un tratamiento
+const getOneTreatment = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  //console.log("token", token);
+  const response = await axios.get(`${baseUrl3}/${id}`, config);
+  return response.data;
+};
+
 export default {
   getAll,
   setId,
@@ -79,4 +92,5 @@ export default {
   enviarCorreo,
   createTreatment,
   getAllTreatments,
+  getOneTreatment,
 };

@@ -6,7 +6,7 @@ const InformacionTratamiento = ({ tratamiento }) => {
       <form>
         <div className="mb-3">
           <label className="form-label" htmlFor={tratamiento.description}>
-            "Descripcion:"
+            Descripcion:
           </label>
           <input
             id={tratamiento.description}
@@ -17,6 +17,7 @@ const InformacionTratamiento = ({ tratamiento }) => {
           ></input>
         </div>
 
+        <label className="form-label">Información usada:</label>
         <ul className="list-group list-group-flush">
           {tratamiento.data.map((item1) => (
             <li key={item1._id} className="list-group-item">

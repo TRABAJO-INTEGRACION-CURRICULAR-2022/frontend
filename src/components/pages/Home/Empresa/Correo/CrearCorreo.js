@@ -1,49 +1,69 @@
 import React, { useState, useEffect } from "react";
 
 import FormularioTratamiento from "./FormularioTratamiento";
+import empresaService from "../../../../../services/empresaCorreos";
+
 const CrearCorreo = ({ handleNuevoCorreo }) => {
-  const [ids, setIds] = useState([]);
-
-  const idGenerator = () => {
-    const newId = Math.floor(Math.random() * 100000000000000000);
-    if (ids.includes(newId)) {
-      //console.log("entroooo");
-      idGenerator();
-    } else {
-      const newIds = [...ids, newId];
-      setIds(newIds);
-      //console.log("newId", newId);
-      return newId;
-    }
-  };
-
   const tratamientoVacío = {
-    id: 1,
-    tipo: "",
-    descripcion: "",
-    data: "",
-    valor: true,
+    idLista: 1,
   };
 
-  const [tratamientos, setTratamientos] = useState([tratamientoVacío]);
+  //const [tratamientos, setTratamientos] = useState([tratamientoVacío]);
+
+  const [tratamientosCrear, setTratamientosCrear] = useState([
+    tratamientoVacío,
+  ]);
+
   const [email, setEmail] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
-  //useeffect listar tratamientos
+  const [tratamientos, setTratamientos] = useState([]);
+  const [opcionesTratamientosOriginal, setOpcionesTratamientosOriginal] =
+    useState([]);
+  const [opcionesTratamientos, setOpcionesTratamientos] = useState([]);
+
+  useEffect(() => {
+    empresaService.getAllTreatments().then((tratamientoResponse) => {
+      setTratamientos(tratamientoResponse);
+      //console.log("getAllTreatments:", tratamientoResponse);
+
+      const opciones = tratamientoResponse.map((tratamiento) => {
+        return {
+          value: tratamiento._id,
+          label: tratamiento.name,
+        };
+      });
+      setOpcionesTratamientos(opciones);
+      setOpcionesTratamientosOriginal(opciones);
+      //console.log("opciones", opciones);
+    });
+  }, []);
 
   // useEffect(() => {
-  //   setTratamientos(tratamientos);
-  // }, [tratamientos]);
+  //   console.log("tratamientosCrear useEffect", tratamientosCrear);
+  // }, [tratamientosCrear]);
 
-  const handleNuevoTratamiento = (nuevoTratamiento) => {
-    //console.log("nuevoTratamiento", nuevoTratamiento);
-    setTratamientos([...tratamientos, nuevoTratamiento]);
+  const handleNuevoTratamiento = () => {
+    // console.log("Lista Tratamientos", tratamientosCrear);
+    // console.log(
+    //   "Ultimo tratamiento",
+    //   tratamientosCrear[tratamientosCrear.length - 1]
+    // );
+    if (tratamientosCrear[tratamientosCrear.length - 1]._id) {
+      //console.log("entro if");
+      const nuevoTratamiento = {
+        idLista: tratamientosCrear[tratamientosCrear.length - 1].idLista + 1,
+      };
+      const newTratamientosCrear = [...tratamientosCrear, nuevoTratamiento];
+      setTratamientosCrear(newTratamientosCrear);
+      //console.log("Boton crear newTratamientosCrear", newTratamientosCrear);
+    }
   };
 
   const handleEnviarCorreo = () => {
-    const newPermisos = tratamientos.map((tratamiento) => {
+    const newPermisos = tratamientosCrear.map((tratamiento) => {
       if (tratamiento._id) {
         return tratamiento;
       } else {
@@ -68,7 +88,7 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
       const permiso = {
         tipo: tratamiento.name,
         descripcion: tratamiento.description,
-        valor: tratamiento.valor,
+        valor: true,
         data: arrayValues,
       };
       return permiso;
@@ -90,27 +110,92 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
       fechaFin: formatoFechaFin(),
       observaciones: observaciones,
     };
-    console.log("handleEnviarCorreo", data);
+    console.log("Enviar Correo", data);
+
+    empresaService.enviarCorreo(data).then((response) => {
+      console.log("response", response);
+    });
   };
 
   const handleEditarTratamiento = (tratamiento) => {
-    const newArrayTratamientos = [...tratamientos, tratamiento];
-    setTratamientos(newArrayTratamientos);
-    console.log("Array - tratamientoa: ", newArrayTratamientos);
-  };
-  const handleEliminarTratamiento = (id) => {
-    console.log("tratamientos antes de eliminar: ", tratamientos);
-    const newArrayTratamientos = tratamientos.filter(
-      (tratamiento) => tratamiento._id !== id
+    //console.log("tratamiento1", tratamiento);
+    //console.log("tratamientosCrear", tratamientosCrear);
+    const newTratamientosCrear = tratamientosCrear.map((tratamientoCrear) => {
+      if (tratamientoCrear.idLista === tratamiento.idLista) {
+        return tratamiento;
+      } else {
+        return tratamientoCrear;
+      }
+    });
+
+    //console.log("newTratamientosCrear", newTratamientosCrear);
+    setTratamientosCrear(newTratamientosCrear);
+
+    const newDeletedOpcionesTratamientos = newTratamientosCrear.reduce(
+      (result, tratamiento) => {
+        //console.log("tratamiento", tratamiento);
+        if (tratamiento._id) {
+          result.push({
+            value: tratamiento._id,
+            label: tratamiento.name,
+          });
+          return result;
+        }
+        return result;
+      },
+      []
     );
-    setTratamientos(newArrayTratamientos);
-    console.log("tratamientos despues de eliminar: ", newArrayTratamientos);
+
+    // console.log(
+    //   "newDeletedOpcionesTratamientos",
+    //   newDeletedOpcionesTratamientos
+    // );
+
+    //return the elements that are not in the newDeletedOpcionesTratamientos
+    const newOpcionesTratamientos = opcionesTratamientosOriginal.filter(
+      (opcion) => {
+        return !newDeletedOpcionesTratamientos.some(
+          (deletedOpcion) => deletedOpcion.value === opcion.value
+        );
+      }
+    );
+
+    //console.log("newOpcionesTratamientos", newOpcionesTratamientos);
+    setOpcionesTratamientos(newOpcionesTratamientos);
+  };
+
+  const handleEliminarTratamiento = (id, idTratamiento) => {
+    console.log("tratamientos antes de eliminar: ", tratamientosCrear);
+
+    const newTratamientosCrear = tratamientosCrear.filter(
+      (tratamiento) => tratamiento.idLista !== id
+    );
+
+    console.log("tratamientos despues de eliminar: ", newTratamientosCrear);
+
+    //re render TratamientosCrear para que se elimine el tratamiento
+    setTratamientosCrear(newTratamientosCrear);
+
+    //add the option to the select
+    const newOpcion = opcionesTratamientosOriginal.find(
+      (opcion) => opcion.value === idTratamiento
+    );
+
+    // console.log("opcionesTratamientosOriginal", opcionesTratamientosOriginal);
+    // console.log("newOpcion", newOpcion);
+
+    const newOpcionesTratamientos = [...opcionesTratamientos, newOpcion];
+    //console.log("newOpcionesTratamientos", newOpcionesTratamientos);
+
+    setOpcionesTratamientos(newOpcionesTratamientos);
   };
 
   return (
     <div>
       <h1>Crear Correo</h1>
+
       <button
+        className="btn btn-secondary"
         onClick={() => {
           handleNuevoCorreo();
           setTratamientos([tratamientoVacío]);
@@ -122,7 +207,9 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
       >
         Cancelar
       </button>
-      <button onClick={() => handleEnviarCorreo()}>Enviar Correo</button>
+      <button className="btn btn-success" onClick={() => handleEnviarCorreo()}>
+        Enviar Correo
+      </button>
       <div className="row">
         <label className="col" htmlFor="nombre">
           Correo Destinatario{" "}
@@ -168,15 +255,14 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
         ></textarea>
       </div>
       <hr className="bg-danger border-2 border-top border-dark" />
-      {tratamientos.map((item, index) => {
-        //console.log("item", item);
-        //console.log("index", index);
-        //console.log("------------------");
+
+      {tratamientosCrear.map((item, index) => {
         return (
-          <div key={index}>
+          <div key={item.idLista}>
             <FormularioTratamiento
               data={item}
               index={index}
+              opcionesTratamientos={opcionesTratamientos}
               handleEliminarTratamiento={handleEliminarTratamiento}
               handleEditarTratamiento={handleEditarTratamiento}
             />
@@ -184,9 +270,7 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
         );
       })}
       <button
-        onClick={() =>
-          handleNuevoTratamiento({ ...tratamientoVacío, id: idGenerator() })
-        }
+        onClick={() => handleNuevoTratamiento()}
         className="btn btn-primary"
       >
         Crear +
