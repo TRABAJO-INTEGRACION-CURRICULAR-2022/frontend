@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TratamientoInformacion = ({
   item,
@@ -7,6 +7,13 @@ const TratamientoInformacion = ({
   handleCancelarTratamiento,
 }) => {
   const [disableButton, setDisableButton] = useState(false);
+
+  //clear all when handle editar is false
+  useEffect(() => {
+    if (!handleEditar) {
+      setDisableButton(false);
+    }
+  }, [handleEditar]);
 
   return (
     <div className={disableButton ? "bg-light" : ""}>

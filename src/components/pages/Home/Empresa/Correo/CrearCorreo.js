@@ -115,6 +115,9 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
     empresaService.enviarCorreo(data).then((response) => {
       console.log("response", response);
     });
+
+    //regresa a la anterior pantalla
+    handleNuevoCorreo();
   };
 
   const handleEditarTratamiento = (tratamiento) => {

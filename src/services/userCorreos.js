@@ -1,6 +1,7 @@
 import axios from "axios";
 const baseUrl1 = "http://localhost:8000/api/users/emails";
 const baseUrl2 = "http://localhost:8000/api/users/email";
+const baseUrl3 = "http://localhost:8000/api/users/aceptConsent";
 
 let token = null;
 let id = null;
@@ -40,4 +41,19 @@ const rechazarTodo = async (id) => {
   return "ok";
 };
 
-export default { getAll, setId, setToken, rechazarTodo, getOne };
+const enviarCorreoConsentimiento = async (id, objeto) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.put(`${baseUrl3}/${id}`, objeto, config);
+  return response.data;
+};
+
+export default {
+  getAll,
+  setId,
+  setToken,
+  rechazarTodo,
+  getOne,
+  enviarCorreoConsentimiento,
+};

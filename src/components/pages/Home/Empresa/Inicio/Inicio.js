@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import fileDownload from "js-file-download";
 
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
+import Dropdown from "react-bootstrap/Dropdown";
 
 import empresaTratamientosService from "../../../../../services/empresaTratamientos";
 
@@ -9,11 +11,12 @@ import empresaCorreoService from "../../../../../services/empresaCorreos";
 
 import Tratamiento from "./Tratamiento";
 import TratamientoInformacion from "./TratamientoInformacion";
+import Bloque from "./Bloque";
 
 const Inicio = () => {
   const [data, setData] = useState([]);
 
-  const [mostrarInformacion, setMostrarInformacion] = useState(false);
+  const [mostrarInformacion, setMostrarInformacion] = useState("inicio");
 
   const [dataTratamiento, setDataTratamiento] = useState({});
 
@@ -42,6 +45,17 @@ const Inicio = () => {
   const [opcionesFiltroTratamiento, setOpcionesFiltroTratamiento] = useState(
     []
   );
+
+  //modos exportar
+  //1 -> exportar todos
+  //2 -> exportar por persona
+  //3 -> exportar por tratamiento
+
+  const [modoExportar, setModoExportar] = useState(1);
+
+  const [filtrotexto, setFiltroTexto] = useState("Filtro: Por Persona - Todos");
+
+  const [bloques, setBloques] = useState([]);
 
   useEffect(() => {
     empresaTratamientosService.getAll().then((tratamientos) => {
@@ -83,12 +97,21 @@ const Inicio = () => {
 
       setDataTratamiento(dataTratamientoTemporal);
       console.log("dataTratamientoTemporal: ", dataTratamientoTemporal);
-      setMostrarInformacion(true);
+      setMostrarInformacion("tratamiento");
 
       const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
       const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
       console.log("fechaFinTratamiento: ", fechaFinTratamiento);
       setFechaFin(fechaFinTratamiento);
+    });
+  };
+
+  const handleVerBloques = (id) => {
+    console.log(`handle ver bloques empresa id: ${id}`);
+    empresaTratamientosService.getBlockChain(id).then((bloques) => {
+      console.log("bloques recuperados: ", bloques);
+      setBloques(bloques);
+      setMostrarInformacion("bloques");
     });
   };
 
@@ -123,19 +146,79 @@ const Inicio = () => {
     if (filter === "Por Persona") {
       console.log("boton filtrar por persona");
       if (filtroSeleccionado === "Todos") {
+        setFiltroTexto("Filtro:Por Persona - Todos");
+        setModoExportar(1);
         console.log("entro todos");
         empresaTratamientosService.getAll().then((tratamientos) => {
           setData(tratamientos);
           console.log("tratamientos recuperados: ", tratamientos);
         });
       } else {
+        setModoExportar(2);
         console.log("filtroSeleccionado: ", filtroSeleccionado);
         handleVerDatos(filtroSeleccionado);
       }
     } else {
+      const labelTratamiento = opcionesFiltroTratamiento.find(
+        (tratamiento) => tratamiento.value === filtroSeleccionado
+      ).label;
+
+      setFiltroTexto(
+        `Filtro: Por Tartamiento - ${labelTratamiento}` /////////////////////
+      );
+      setModoExportar(3);
       console.log("boton filtrar por Tratamiento");
       //TODO: filtrar por tratamiento
       //mostar usuarios que tienen ese tratamiento
+      //console.log("filtroSeleccionado: ", filtroSeleccionado);
+      //console.log("opcionesFiltroTratamiento: ", opcionesFiltroTratamiento);
+
+      console.log("labelTratamiento: ", labelTratamiento);
+      empresaTratamientosService
+        .getUsersByTreatment(labelTratamiento)
+        .then((tratamientos) => {
+          console.log("tratamientos recuperados: ", tratamientos);
+          setData(tratamientos);
+        });
+    }
+  };
+
+  const handleExportar = (tipo) => {
+    //comprobar informacion
+
+    switch (modoExportar) {
+      case 1:
+        console.log("exportar todos los datos");
+        //download file
+        empresaTratamientosService.exportAllEnterprise(tipo).then((data) => {
+          fileDownload(data, `TratamietosUsuariosTodos.${tipo}`);
+        });
+        break;
+      case 2:
+        console.log("exportar datos de un usuario");
+        break;
+      case 3:
+        console.log("exportar datos de un tratamiento");
+
+        const labelTratamiento = opcionesFiltroTratamiento.find(
+          (tratamiento) => tratamiento.value === filtroSeleccionado
+        ).label;
+
+        console.log("filtroSeleccionado: ", labelTratamiento);
+        console.log("exportar datos de un tratamiento 2");
+        empresaCorreoService
+          .exportUsersByTreatment(labelTratamiento)
+          .then((data) => {
+            tipo = "xlsx";
+            fileDownload(data, `Tratamietos_${labelTratamiento}.${tipo}`);
+          });
+
+        break;
+      default:
+        ConstantSourceNode.log("switch case default");
+      // empresaTratamientosService.exportAllEnterprise(tipo).then((data) => {
+      //   fileDownload(data, `TratamietosUsuariosTodos.${tipo}`);
+      // });
     }
   };
 
@@ -149,7 +232,7 @@ const Inicio = () => {
             <button
               className="m-2 btn btn-secondary"
               onClick={() => {
-                setMostrarInformacion(false);
+                setMostrarInformacion("inicio");
               }}
             >
               Cancelar
@@ -164,6 +247,7 @@ const Inicio = () => {
             <div className="col-6">
               <div className="bg-white rounded p-3">
                 <h3>Tratamiento</h3>
+
                 <h3>Fecha Fin</h3>
                 <div>
                   <input type={"date"} value={fechaFin} disabled={true}></input>
@@ -197,6 +281,27 @@ const Inicio = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  const bloquesRender = () => {
+    return (
+      <div>
+        <h1>Bloques:</h1>
+        <button
+          className="m-2 btn btn-secondary"
+          onClick={() => {
+            setMostrarInformacion("inicio");
+          }}
+        >
+          Atras
+        </button>
+        <div>
+          {bloques.map((bloque) => {
+            return <Bloque key={bloque._id} item={bloque}></Bloque>;
+          })}
         </div>
       </div>
     );
@@ -240,6 +345,21 @@ const Inicio = () => {
           </button>
         </div>
         <h1>Tratamientos</h1>
+        <h5>{filtrotexto}</h5>
+        <Dropdown
+          onSelect={(e) => {
+            handleExportar(e);
+          }}
+        >
+          <Dropdown.Toggle variant="warning" id="dropdown-basic">
+            Exportar
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item eventKey="csv">.csv</Dropdown.Item>
+            <Dropdown.Item eventKey="xlsx">.xlsx</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         <div className="d-flex justify-content-around"></div>
         {data.length > 0 ? (
           data.map((tratamiento) => (
@@ -247,6 +367,7 @@ const Inicio = () => {
               key={tratamiento.id_consent}
               item={tratamiento}
               handleVerDatos={handleVerDatos}
+              handleVerBloques={handleVerBloques}
             />
           ))
         ) : (
@@ -261,7 +382,9 @@ const Inicio = () => {
   return (
     <div>
       <h1>Inicio Empresa (*Borrar)</h1>
-      {mostrarInformacion ? tratamiento() : tratamientos()}
+      {mostrarInformacion === "inicio" ? tratamientos() : null}
+      {mostrarInformacion === "tratamiento" ? tratamiento() : null}
+      {mostrarInformacion === "bloques" ? bloquesRender() : null}
     </div>
   );
 };

@@ -131,7 +131,7 @@ const Correo = () => {
     const dataEnviar = neededData.map((data) => {
       const objetoData = {
         tipo: data,
-        value: datatratamiento[data],
+        valor: datatratamiento[data],
       };
 
       return objetoData;
@@ -145,6 +145,29 @@ const Correo = () => {
     };
 
     console.log("enviarSolicitud: ", enviarSolicitud);
+    console.log("enviarSolicitud: ", JSON.stringify(enviarSolicitud));
+    console.log("correo", correo);
+
+    correosService
+      .enviarCorreoConsentimiento(correo._id, enviarSolicitud)
+      .then((response) => {
+        //delete from correos the correo
+        const newCorreos = correos.filter((correoFilter) => {
+          return correo._id !== correoFilter.id;
+        });
+        console.log("newCorreos: ", newCorreos);
+        console.log("response: ", response);
+        setMostrarInformacion(false);
+        setPermisosTratamiento([]);
+        setMostrarInformacion(false);
+        setMostrarInformacion2(false);
+        setDatatratamiento({});
+        setTextoBoton("Siguiente");
+        setCorreo([]);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
 
     // const newCorreo = { ...correo, respondido: true };
     // const newCorreos = correos.map((correo) => {

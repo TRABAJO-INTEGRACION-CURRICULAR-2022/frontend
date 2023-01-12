@@ -12,8 +12,6 @@ const Inicio = () => {
   const [datatratamiento, setDatatratamiento] = useState({});
   const [datatratamientoOriginal, setDatatratamientoOriginal] = useState({});
 
-  const [permisosTratamiento, setPermisosTratamiento] = useState([]);
-
   const [mostrarInformacion, setMostrarInformacion] = useState(false);
   const [editar, setEditar] = useState(false);
 
@@ -68,7 +66,7 @@ const Inicio = () => {
     console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
   };
 
-  const handleRechazarTodoSolicituTratamiento = () => {
+  const handleRechazarTodosLosTratamientos = () => {
     console.log("rechazar todo de: ", tratamiento._id);
     setDatatratamiento(datatratamientoOriginal);
     setMostrarInformacion(false);
@@ -89,6 +87,16 @@ const Inicio = () => {
     setEditar(false);
   };
 
+  const handleGuardarCambios = () => {
+    console.log("handleGuardarCambios+++++++++++++++++++++++++++++++");
+    console.log("datatratamientoOriginal: ", datatratamientoOriginal);
+    console.log("datatratamiento: ", datatratamiento);
+    console.log("data: ", data);
+    console.log("tratamiento: ", tratamiento);
+    console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
+    console.log("+++++++++++++++++++++++++++++++");
+  };
+
   const verInformacion = () => {
     return (
       <div>
@@ -105,7 +113,12 @@ const Inicio = () => {
               >
                 Cancelar Edición
               </button>
-              <button className="btn btn-danger" onClick={() => {}}>
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  handleRechazarTodosLosTratamientos();
+                }}
+              >
                 Rechazar Todos los Tratamientos
               </button>
             </div>
@@ -198,7 +211,14 @@ const Inicio = () => {
 
         <div className="p-3 d-flex justify-content-end ">
           {editar ? (
-            <button className="m-2 btn btn-primary">Editar</button>
+            <button
+              className="m-2 btn btn-primary"
+              onClick={() => {
+                handleGuardarCambios();
+              }}
+            >
+              Editar
+            </button>
           ) : null}
         </div>
       </div>
