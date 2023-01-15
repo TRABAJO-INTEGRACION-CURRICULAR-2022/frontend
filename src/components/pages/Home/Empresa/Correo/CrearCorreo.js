@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 
+import {
+  correoEmpresa,
+  globales,
+} from "../../../../../constants/nombresConstantes";
+
 import FormularioTratamiento from "./FormularioTratamiento";
 import empresaService from "../../../../../services/empresaCorreos";
 
-const CrearCorreo = ({ handleNuevoCorreo }) => {
+const CrearCorreo = ({ handleNuevoCorreoAtras }) => {
   const tratamientoVacío = {
     idLista: 1,
   };
@@ -117,7 +122,7 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
     });
 
     //regresa a la anterior pantalla
-    handleNuevoCorreo();
+    handleNuevoCorreoAtras();
   };
 
   const handleEditarTratamiento = (tratamiento) => {
@@ -195,69 +200,83 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
 
   return (
     <div>
-      <h1>Crear Correo</h1>
+      <h1>{correoEmpresa.lblTituloCrearCorreo}</h1>
+      <form>
+        <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              handleNuevoCorreoAtras();
+              setTratamientos([tratamientoVacío]);
+              setDescripcion("");
+              setFechaFin("");
+              setObservaciones("");
+              setEmail("");
+            }}
+          >
+            {globales.btnCancelar}
+          </button>
+          <button
+            type="submit"
+            className="btn btn-success"
+            onClick={() => {
+              //console.log("correo enviado");
+              handleEnviarCorreo();
+            }}
+          >
+            {correoEmpresa.btnEnviarCorreo}
+          </button>
+        </div>
 
-      <button
-        className="btn btn-secondary"
-        onClick={() => {
-          handleNuevoCorreo();
-          setTratamientos([tratamientoVacío]);
-          setDescripcion("");
-          setFechaFin("");
-          setObservaciones("");
-          setEmail("");
-        }}
-      >
-        Cancelar
-      </button>
-      <button className="btn btn-success" onClick={() => handleEnviarCorreo()}>
-        Enviar Correo
-      </button>
-      <div className="row">
-        <label className="col" htmlFor="nombre">
-          Correo Destinatario{" "}
-        </label>
-        <input
-          className="col"
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        ></input>
-      </div>
-      <div className="row">
-        <label className="col" htmlFor="nombre">
-          Descripcion{" "}
-        </label>
-        <textarea
-          className="col"
-          type="text"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-        ></textarea>
-      </div>
-      <div className="row">
-        <label className="col" htmlFor="nombre">
-          Fecha fin{" "}
-        </label>
-        <input
-          className="col"
-          type="date"
-          value={fechaFin}
-          onChange={(e) => setFechaFin(e.target.value)}
-        ></input>
-      </div>
-      <div className="row">
-        <label className="col" htmlFor="nombre">
-          Observaciones{" "}
-        </label>
-        <textarea
-          className="col"
-          type="text"
-          value={observaciones}
-          onChange={(e) => setObservaciones(e.target.value)}
-        ></textarea>
-      </div>
+        <div>
+          <label className="form-label" htmlFor="nombre">
+            {correoEmpresa.lblDestinatario}
+          </label>
+          <input
+            className="form-control"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          ></input>
+        </div>
+        <div>
+          <label className="form-label" htmlFor="nombre">
+            {correoEmpresa.lblAsunto}
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            value={observaciones}
+            onChange={(e) => setObservaciones(e.target.value)}
+          ></input>
+        </div>
+        <div>
+          <label className="form-label" htmlFor="nombre">
+            {correoEmpresa.lblCuerpo}
+          </label>
+          <textarea
+            className="form-control"
+            type="text"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+          ></textarea>
+        </div>
+
+        <div>
+          <label className="form-label" htmlFor="nombre">
+            {correoEmpresa.lblFechaFin}
+          </label>
+          <input
+            className="form-control"
+            type="date"
+            value={fechaFin}
+            onChange={(e) => setFechaFin(e.target.value)}
+          ></input>
+        </div>
+      </form>
+
       <hr className="bg-danger border-2 border-top border-dark" />
+      <h1>{correoEmpresa.lblTratamientos}</h1>
 
       {tratamientosCrear.map((item, index) => {
         return (
@@ -272,12 +291,14 @@ const CrearCorreo = ({ handleNuevoCorreo }) => {
           </div>
         );
       })}
-      <button
-        onClick={() => handleNuevoTratamiento()}
-        className="btn btn-primary"
-      >
-        Crear +
-      </button>
+      <div className="d-grid gap-2 col-6 mx-auto">
+        <button
+          onClick={() => handleNuevoTratamiento()}
+          className="btn btn-primary"
+        >
+          {correoEmpresa.btnAniadirTratamiento}
+        </button>
+      </div>
     </div>
   );
 };

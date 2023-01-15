@@ -1,5 +1,7 @@
 import React from "react-router-dom";
 
+import { navBarEmpresa } from "../../constants/nombresConstantes";
+
 export default function Navbar({ user }) {
   const usuarioLogeado = () => {
     return (
@@ -23,7 +25,7 @@ export default function Navbar({ user }) {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <a className="nav-link active" aria-current="page" href="#">
-                  Home
+                  {navBarEmpresa.lblMenu1}
                 </a>
               </li>
               <li className="nav-item">
@@ -32,7 +34,7 @@ export default function Navbar({ user }) {
                   aria-current="page"
                   href="inicio"
                 >
-                  Inicio
+                  {navBarEmpresa.lblMenu2}
                 </a>
               </li>
               <li className="nav-item">
@@ -41,7 +43,7 @@ export default function Navbar({ user }) {
                   aria-current="page"
                   href="correo"
                 >
-                  Correo
+                  {navBarEmpresa.lblMenu3}
                 </a>
               </li>
             </ul>

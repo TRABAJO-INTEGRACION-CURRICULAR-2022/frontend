@@ -1,7 +1,9 @@
-export const opciones = [
-  { value: "nombre", label: "nombre" },
-  { value: "apellido", label: "apellido" },
-  { value: "correo", label: "correo" },
+export const opcionesData = [
+  { value: "name", label: "Nombre" },
+  { value: "lastName", label: "Apellido" },
+  { value: "ci", label: "Cedula" },
+  { value: "ruc", label: "Ruc" },
+  { value: "email", label: "correo" },
   { value: "telefono", label: "telefono" },
   { value: "direccion", label: "direccion" },
   { value: "ciudad", label: "ciudad" },

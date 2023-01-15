@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
+import { correoEmpresa } from "../../../../../constants/nombresConstantes";
+
 import empresaService from "../../../../../services/empresaCorreos";
 
 import CrearCorreo from "./CrearCorreo";
@@ -20,7 +22,7 @@ const Correo = () => {
     // });
   }, []);
 
-  const handleNuevoCorreo = () => {
+  const handleNuevoCorreoAtras = () => {
     setCrearCorreo(!crearCorreo);
   };
 
@@ -28,51 +30,53 @@ const Correo = () => {
     console.log("correoId: ", correoId);
   };
 
-  const correosEnviados = () => {
+  const correosEnviadosRender = () => {
     return (
       <div>
-        <div className="bg-white rounded p-3 mb-2">
-          {correos.length > 0 ? (
-            correos.map((correo) => (
+        <h1>{correoEmpresa.lblTituloCorreos}</h1>
+
+        <div>
+          <button
+            hidden={crearCorreo}
+            onClick={() => {
+              handleNuevoCorreoAtras();
+            }}
+          >
+            {correoEmpresa.btnNuevoCorreo}
+          </button>
+        </div>
+        {correos.length > 0 ? (
+          correos.map((correo) => (
+            <div className="bg-white rounded p-3 mb-2">
               <CorreoUnitario
                 key={correo._id}
                 correo={correo}
                 handleVerCorreo={handleVerCorreo}
               />
-            ))
-          ) : (
-            <div>
-              <h3>No hay correos enviados</h3>
             </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <div className="alert alert-warning" role="alert">
+            {correoEmpresa.lblMensajeNoExistenCorreos}
+          </div>
+        )}
       </div>
     );
   };
 
+  const nuevoCorreoRender = () => {};
+
   return (
     <div>
-      <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-        <Tab eventKey="correos" title="Correos">
-          <h1>Correos</h1>
-
-          <div>
-            <button
-              hidden={crearCorreo}
-              onClick={() => {
-                handleNuevoCorreo();
-              }}
-            >
-              Nuevo Correo
-            </button>
-          </div>
+      <Tabs defaultActiveKey="correos" id="uncontrolled-tab-example">
+        <Tab eventKey="correos" title={correoEmpresa.lblSubmenu1}>
           {crearCorreo ? (
-            <CrearCorreo handleNuevoCorreo={handleNuevoCorreo} />
+            <CrearCorreo handleNuevoCorreoAtras={handleNuevoCorreoAtras} />
           ) : (
-            correosEnviados()
+            correosEnviadosRender()
           )}
         </Tab>
-        <Tab eventKey="crearTratamientos" title="Crear Tratamientos">
+        <Tab eventKey="crearTratamientos" title={correoEmpresa.lblSubmenu2}>
           <Tratamientos />
         </Tab>
       </Tabs>

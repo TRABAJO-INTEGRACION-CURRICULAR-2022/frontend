@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 
+import {
+  correoEmpresa,
+  globales,
+} from "../../../../../../constants/nombresConstantes";
+
 import TratamientoUnitario from "./TratamientoUnitario";
 import CrearTratamiento from "./CrearTratamiento";
 
@@ -34,53 +39,69 @@ const Tratamientos = () => {
     console.log("Editar tratamiento - tratamientoId: ", tratamientoId);
   };
 
-  const listaTratamientos = () => {
+  const habdleCancelarCreacionTratamiento = () => {
+    setCrearTratamiento(!crearTratamiento);
+  };
+
+  const listaTratamientosRender = () => {
     return (
       <div>
+        <h1>{correoEmpresa.lblTituloTratamientos}</h1>
+        <div className="d-flex justify-content-end">
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              handleNuevoTratamiento();
+            }}
+          >
+            {correoEmpresa.btnCrearTratamiento}
+          </button>
+        </div>
         <div>
-          <div className="bg-white rounded p-3 mb-2">
-            {tratamientos.length > 0 ? (
-              tratamientos.map((tratamiento, index) => (
+          {tratamientos.length > 0 ? (
+            tratamientos.map((tratamiento, index) => (
+              <div className="bg-white rounded p-3 mb-2">
                 <TratamientoUnitario
                   key={index}
                   tratamiento={tratamiento}
                   handleEditarTratamiento={handleEditarTratamiento}
                 />
-              ))
-            ) : (
-              <div>
-                <h3>No hay tratamientos</h3>
               </div>
-            )}
-          </div>
+            ))
+          ) : (
+            <div className="alert alert-warning" role="alert">
+              {correoEmpresa.lblMensajeNoExistenTratamientos}
+            </div>
+          )}
         </div>
         ;
       </div>
     );
   };
 
-  return (
-    <div>
+  const creartratamientoRender = () => {
+    return (
       <div>
+        <h1>{correoEmpresa.lblTituloNuevoTratamiento}</h1>
         <div className="d-flex justify-content-end">
           <button
             className="btn btn-primary"
-            hidden={crearTratamiento}
             onClick={() => {
-              handleNuevoTratamiento();
+              habdleCancelarCreacionTratamiento();
+              console.log("cancelar creacion de tratamiento");
             }}
           >
-            Nuevo Tratamiento
+            {globales.btnCancelar}
           </button>
         </div>
-
-        <h1>Tratamientos</h1>
-      </div>
-      {crearTratamiento ? (
         <CrearTratamiento handleNuevoTratamiento={handleNuevoTratamiento} />
-      ) : (
-        listaTratamientos()
-      )}
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      {crearTratamiento ? creartratamientoRender() : listaTratamientosRender()}
     </div>
   );
 };

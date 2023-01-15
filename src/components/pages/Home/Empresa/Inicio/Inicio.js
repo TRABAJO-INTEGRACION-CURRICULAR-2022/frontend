@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import fileDownload from "js-file-download";
 
+import {
+  inicioEmpresa,
+  globales,
+} from "../../../../../constants/nombresConstantes";
+
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -24,7 +29,7 @@ const Inicio = () => {
 
   const [fechaFin, setFechaFin] = useState("");
 
-  const [filter, setFilter] = useState("Por Persona");
+  const [filter, setFilter] = useState(inicioEmpresa.lblFiltroOpcion1);
 
   const [filtroSeleccionado, setFiltroSeleccionado] = useState("Todos");
 
@@ -53,7 +58,9 @@ const Inicio = () => {
 
   const [modoExportar, setModoExportar] = useState(1);
 
-  const [filtrotexto, setFiltroTexto] = useState("Filtro: Por Persona - Todos");
+  const [filtrotexto, setFiltroTexto] = useState(
+    `${inicioEmpresa.lblFiltroSeleccionado} Por Persona - Todos`
+  );
 
   const [bloques, setBloques] = useState([]);
 
@@ -119,7 +126,7 @@ const Inicio = () => {
     console.log("e.target.value: ", valor);
     setFilter(valor);
 
-    if (valor === "Por Persona") {
+    if (valor === inicioEmpresa.lblFiltroOpcion1) {
       console.log("filtro por persona");
       setOpcionesFiltro(opcionesFitrolPersona);
     } else {
@@ -143,10 +150,12 @@ const Inicio = () => {
   };
 
   const handleButtonFiltrar = () => {
-    if (filter === "Por Persona") {
+    if (filter === inicioEmpresa.lblFiltroOpcion1) {
       console.log("boton filtrar por persona");
       if (filtroSeleccionado === "Todos") {
-        setFiltroTexto("Filtro:Por Persona - Todos");
+        setFiltroTexto(
+          `${inicioEmpresa.lblFiltroSeleccionado} Por Persona - Todos`
+        );
         setModoExportar(1);
         console.log("entro todos");
         empresaTratamientosService.getAll().then((tratamientos) => {
@@ -164,7 +173,7 @@ const Inicio = () => {
       ).label;
 
       setFiltroTexto(
-        `Filtro: Por Tartamiento - ${labelTratamiento}` /////////////////////
+        `${inicioEmpresa.lblFiltroSeleccionado} Por Tartamiento - ${labelTratamiento}` /////////////////////
       );
       setModoExportar(3);
       console.log("boton filtrar por Tratamiento");
@@ -206,7 +215,7 @@ const Inicio = () => {
 
         console.log("filtroSeleccionado: ", labelTratamiento);
         console.log("exportar datos de un tratamiento 2");
-        empresaCorreoService
+        empresaTratamientosService
           .exportUsersByTreatment(labelTratamiento)
           .then((data) => {
             tipo = "xlsx";
@@ -215,7 +224,7 @@ const Inicio = () => {
 
         break;
       default:
-        ConstantSourceNode.log("switch case default");
+        console.log("switch case default");
       // empresaTratamientosService.exportAllEnterprise(tipo).then((data) => {
       //   fileDownload(data, `TratamietosUsuariosTodos.${tipo}`);
       // });
@@ -235,10 +244,10 @@ const Inicio = () => {
                 setMostrarInformacion("inicio");
               }}
             >
-              Cancelar
+              {globales.btnRegresar}
             </button>
             <button className="m-2 btn btn-primary" onClick={() => {}}>
-              Exportar
+              {globales.btnExportar}
             </button>
           </div>
         </div>
@@ -311,21 +320,21 @@ const Inicio = () => {
     return (
       <div>
         <div>
-          <h1>Filtro: </h1>
+          <h1>{inicioEmpresa.lblFiltro}: </h1>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Check
-              value="Por Persona"
+              value={inicioEmpresa.lblFiltroOpcion1}
               type="radio"
-              label="Por Persona"
+              label={inicioEmpresa.lblFiltroOpcion1}
               onChange={(e) => handleFilter(e.target.value)}
-              checked={filter === "Por Persona" ? true : false}
+              checked={filter === inicioEmpresa.lblFiltroOpcion1 ? true : false}
             />
             <Form.Check
-              value="Por Tratamiento"
+              value={inicioEmpresa.lblFiltroOpcion2}
               type="radio"
-              label="Por Tratamiento"
+              label={inicioEmpresa.lblFiltroOpcion2}
               onChange={(e) => handleFilter(e.target.value)}
-              checked={filter === "Por Tratamiento" ? true : false}
+              checked={filter === inicioEmpresa.lblFiltroOpcion2 ? true : false}
             />
           </Form.Group>
           <Select
@@ -341,10 +350,10 @@ const Inicio = () => {
               handleButtonFiltrar();
             }}
           >
-            Filtrar
+            {inicioEmpresa.btnFiltro}
           </button>
         </div>
-        <h1>Tratamientos</h1>
+        <h1>{inicioEmpresa.lblTratamientos}</h1>
         <h5>{filtrotexto}</h5>
         <Dropdown
           onSelect={(e) => {
@@ -352,7 +361,7 @@ const Inicio = () => {
           }}
         >
           <Dropdown.Toggle variant="warning" id="dropdown-basic">
-            Exportar
+            {inicioEmpresa.btnExportar}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
@@ -372,7 +381,7 @@ const Inicio = () => {
           ))
         ) : (
           <div className="alert alert-warning" role="alert">
-            No existen Tratamientos por el momento
+            {inicioEmpresa.lblMensajeNoExistenCoincidencias}
           </div>
         )}
       </div>
@@ -381,7 +390,6 @@ const Inicio = () => {
 
   return (
     <div>
-      <h1>Inicio Empresa (*Borrar)</h1>
       {mostrarInformacion === "inicio" ? tratamientos() : null}
       {mostrarInformacion === "tratamiento" ? tratamiento() : null}
       {mostrarInformacion === "bloques" ? bloquesRender() : null}

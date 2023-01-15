@@ -10,8 +10,9 @@ const CorreoUnitario = ({ correo, handleVerCorreo }) => {
     return fecha2[0];
   };
   return (
-    <>
+    <div>
       <div
+        style={{ cursor: "pointer" }}
         className="d-flex justify-content-center"
         onClick={() => {
           console.log("ver correo: ", correo.id);
@@ -47,7 +48,7 @@ const CorreoUnitario = ({ correo, handleVerCorreo }) => {
         </div>
       </div>
       <hr className="bg-danger border-2 border-top border-dark" />
-    </>
+    </div>
   );
 };
 

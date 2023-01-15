@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
+
+import { opcionesData } from "../../../../../constants/opcionesData";
+
+import {
+  correoUsuario,
+  globales,
+  tratamientoConstantes,
+} from "../../../../../constants/nombresConstantes";
+
 import correosService from "../../../../../services/userCorreos";
 import CorreoUnitario from "./CorreoUnitario";
 import TratamientoCorreo from "./TratamientoCorreo";
-
-import { opciones } from "./data";
 
 const Correo = () => {
   const [correos, setCorreos] = useState([]);
@@ -20,7 +27,7 @@ const Correo = () => {
 
   const [fechaFin, setFechaFin] = useState("");
 
-  const [textoBoton, setTextoBoton] = useState("Siguiente");
+  const [textoBoton, setTextoBoton] = useState(globales.btnSiguiente);
 
   useEffect(() => {
     correosService.getAll().then((correos) => {
@@ -99,14 +106,14 @@ const Correo = () => {
   const handleRechazarTodoSolicituTratamiento = () => {
     console.log("rechazar todo de: ", correo._id);
     correosService.rechazarTodo(correo._id).then((response) => {
-      console.log("response: ", response);
+      console.log("response1: ", response);
       setMostrarInformacion(false);
       setCorreo([]);
     });
   };
 
   const handleSiguiente = () => {
-    setTextoBoton("Aceptar");
+    setTextoBoton(globales.btnAceptar);
     setMostrarInformacion2(true);
     let newNeededData = [];
     permisosTratamiento.forEach((permiso) => {
@@ -156,13 +163,13 @@ const Correo = () => {
           return correo._id !== correoFilter.id;
         });
         console.log("newCorreos: ", newCorreos);
-        console.log("response: ", response);
+        console.log("response enviarCorreoConsentimiento: ", response);
         setMostrarInformacion(false);
         setPermisosTratamiento([]);
         setMostrarInformacion(false);
         setMostrarInformacion2(false);
         setDatatratamiento({});
-        setTextoBoton("Siguiente");
+        setTextoBoton(globales.btnSiguiente);
         setCorreo([]);
       })
       .catch((error) => {
@@ -188,16 +195,31 @@ const Correo = () => {
     setMostrarInformacion(false);
     setDatatratamiento(datatratamientoOriginal);
     setMostrarInformacion2(false);
-    setTextoBoton("Siguiente");
+    setTextoBoton(globales.btnSiguiente);
+  };
+
+  const retornarLabel = (value) => {
+    console.log("value: ", value);
+    const response = opcionesData.find((item) => {
+      return item.value === value;
+    });
+    console.log("response: ", response);
+
+    if (response !== undefined) {
+      return response.label;
+    } else {
+      return value;
+    }
   };
 
   const aceptarORechazarTratamientosP1 = () => {
     return (
       <div className="bg-white rounded p-3">
-        <div>
-          <h3>Fecha Fin</h3>
-          <div>
+        <form className="mb-5">
+          <h3 className="form-label">{tratamientoConstantes.lblFechaFin}</h3>
+          <div className="col-8">
             <input
+              className="form-control"
               type={"date"}
               value={fechaFin}
               onChange={(e) => {
@@ -206,8 +228,8 @@ const Correo = () => {
               }}
             ></input>
           </div>
-        </div>
-        <h3>Tratamiento Solicitud</h3>
+        </form>
+        <h3 className="mb-3">{tratamientoConstantes.lblTituloTratamientos}</h3>
         {correo.permisos.map((item, index) => (
           <TratamientoCorreo
             key={index}
@@ -224,14 +246,14 @@ const Correo = () => {
     console.log("aceptarORechazarTratamientos");
     return (
       <div className="bg-white rounded p-3">
-        <h3>Datos Necesarios</h3>
+        <h3>{tratamientoConstantes.lblInformacionTratamiento}</h3>
         <form>
           {neededData.map((itemData, itemDataIndex) => {
             //console.log("itemData: ", itemData);
             return (
               <div key={itemDataIndex} className="mb-3">
                 <label className="form-label" htmlFor={itemDataIndex}>
-                  {itemData}:{" "}
+                  {retornarLabel(itemData)}:{" "}
                 </label>
                 <input
                   className="form-control"
@@ -252,27 +274,42 @@ const Correo = () => {
     );
   };
 
-  const verCorreo = () => {
+  const verCorreoRender = () => {
     return (
       <div>
-        <h2>Empresa: {correo.empresa.name}</h2>
-        <h5>Hora de recibido: {correo.fechaEnvio}</h5>
+        <div className="bg-white rounded p-3 mb-2">
+          <h1>{correoUsuario.lblDatosCorreo}</h1>
+          <h4>
+            {tratamientoConstantes.lbltituloEmpresa}
+            {correo.empresa.name}
+          </h4>
+          <h4>
+            {tratamientoConstantes.lblHoraRecibido} {correo.fechaEnvio}
+          </h4>
+        </div>
+
         <div className="p-3 d-flex justify-content-end ">
           <div className="btn-group">
             <button
               className=" btn btn-secondary"
               onClick={() => {
-                handleCancelarVerCorreo();
+                if (!mostrarInformacion2) {
+                  handleCancelarVerCorreo();
+                } else {
+                  setMostrarInformacion2(false);
+                  setTextoBoton(globales.btnSiguiente);
+                  setDatatratamiento(datatratamientoOriginal);
+                }
               }}
             >
-              Cancelar
+              {globales.btnRegresar}
             </button>
 
             <button
               className=" btn btn-danger"
               onClick={() => handleRechazarTodoSolicituTratamiento("1")}
             >
-              Rechazar Todo
+              {globales.btnRecharzarTodoElTratamiento}
             </button>
           </div>
         </div>
@@ -300,29 +337,39 @@ const Correo = () => {
     );
   };
 
-  const verCorreos = () => {
+  const verCorreosRender = () => {
     return (
       <div>
-        <div className="bg-white rounded p-3 mb-2">
-          {correos.map((correo) => {
-            return (
-              <CorreoUnitario
-                key={correo.id}
-                correo={correo}
-                handleVerCorreo={handleVerCorreo}
-              />
-            );
-          })}
+        <h2>{correoUsuario.lblTituloCorreos}</h2>
+        <div className="alert alert-primary">
+          <p>{correoUsuario.lblInstruccionesCorreo}</p>
         </div>
+
+        {correos.length > 0 ? (
+          correos.map((correo) => {
+            return (
+              <div className="bg-white rounded p-3 mb-2">
+                <CorreoUnitario
+                  key={correo.id}
+                  correo={correo}
+                  handleVerCorreo={handleVerCorreo}
+                />
+              </div>
+            );
+          })
+        ) : (
+          <div className="alert alert-warning" role="alert">
+            {correoUsuario.lblMensajeNoExistenCorreos}
+          </div>
+        )}
       </div>
     );
   };
 
   return (
-    <>
-      <h2>Correo</h2>
-      {mostrarInformacion ? verCorreo() : verCorreos()}
-    </>
+    <div className="container">
+      {mostrarInformacion ? verCorreoRender() : verCorreosRender()}
+    </div>
   );
 };
 

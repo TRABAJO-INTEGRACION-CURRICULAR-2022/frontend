@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { opciones } from "./data";
+import {
+  globales,
+  tratamientoConstantes,
+} from "../../../../../constants/nombresConstantes";
+
+import { opcionesData } from "../../../../../constants/opcionesData";
 
 const TratamientoCorreo = ({
   item,
@@ -9,7 +14,8 @@ const TratamientoCorreo = ({
   const [disableButton, setDisableButton] = useState(false);
 
   const retornarLabel = (value) => {
-    const response = opciones.find((item) => {
+    console.log("value: ", value);
+    const response = opcionesData.find((item) => {
       return item.value === value;
     });
     console.log("response: ", response);
@@ -24,18 +30,29 @@ const TratamientoCorreo = ({
   return (
     <div className={disableButton ? "bg-light" : ""}>
       <div className="row">
-        <div className="col-sm">
-          <h4>{item.tipo}</h4>
-          <p>Descripcion: {item.tipo} </p>
-          <ul className="list-group list-group-flush">
-            {item.data.map((item1, index) => (
-              <li key={index} className="list-group-item">
-                {retornarLabel(item1)}
-              </li>
-            ))}
-          </ul>
+        <div className="col-8">
+          <form>
+            <h5 className="form-label">{item.tipo}</h5>
+            <h5 className="form-label">
+              {tratamientoConstantes.lblDescripcionTratamiento}{" "}
+            </h5>
+            <p className="form-control">{item.tipo}</p>
+            <h5 className="form-label">
+              {tratamientoConstantes.lblInformacionTratamiento}
+            </h5>
+            <div className="form-control">
+              <ul className="list-group list-group-flush">
+                {console.log("item.data: ", item.data)}
+                {item.data.map((item1, index) => (
+                  <li key={index} className="list-group-item">
+                    {retornarLabel(item1)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </form>
         </div>
-        <div className="col-sm">
+        <div className="col-4">
           <button
             className="m-2 btn btn-secondary"
             disabled={!disableButton}
@@ -45,7 +62,7 @@ const TratamientoCorreo = ({
             }}
             hidden={!disableButton}
           >
-            Cancelar
+            {globales.btnCancelar}
           </button>
           <button
             className="m-2 btn btn-danger"
@@ -55,7 +72,7 @@ const TratamientoCorreo = ({
               setDisableButton(true);
             }}
           >
-            Rechazar
+            {globales.btnRechazar}
           </button>
         </div>
       </div>

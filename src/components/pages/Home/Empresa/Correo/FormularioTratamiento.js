@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+import {
+  correoEmpresa,
+  globales,
+} from "../../../../../constants/nombresConstantes";
+
 import Select from "react-select";
 
 import empresaService from "../../../../../services/empresaCorreos";
@@ -14,17 +20,20 @@ const FormularioTratamiento = ({
   const [dataTratamiento, setDataTratamiento] = useState({});
 
   return (
-    <div className="container">
-      <button
-        className="btn btn-danger"
-        onClick={() => {
-          //console.log("Tratamiento a eliminar id", idTratamientoSeleccionado);
-          //console.log("data a eliminar ", tratamiento);
-          handleEliminarTratamiento(data.idLista, data._id);
-        }}
-      >
-        Eliminar
-      </button>
+    <div>
+      <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button
+          className="btn btn-danger "
+          onClick={() => {
+            //console.log("Tratamiento a eliminar id", idTratamientoSeleccionado);
+            //console.log("data a eliminar ", tratamiento);
+            handleEliminarTratamiento(data.idLista, data._id);
+          }}
+        >
+          {globales.btnEliminar}
+        </button>
+      </div>
+
       <div>
         <Select
           options={opcionesTratamientos}
