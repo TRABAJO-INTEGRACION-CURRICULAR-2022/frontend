@@ -106,15 +106,29 @@ const Inicio = () => {
       arrayRechazoPermisos.length > 0
     ) {
       if (Object.keys(dataDiferente).length > 0) {
-        const dataTratamiento = { data: dataDiferente };
+        //Crear un array con tipo y valor
+        const arrayDataDiferente = [];
+        for (const key in dataDiferente) {
+          const data = {
+            tipo: key,
+            valor: dataDiferente[key],
+          };
+          arrayDataDiferente.push(data);
+        }
+
+        const dataTratamiento = { data: arrayDataDiferente };
+
         console.log("si hay cambios en los valores");
         console.log("dataTratamientoEnviar:", dataTratamiento);
-        //console.log(tratamiento._id);
-        userTratamientosService
-          .updateData(tratamiento._id, dataTratamiento)
-          .then((response) => {
-            console.log("response: ", response);
-          });
+        console.log(
+          "dataTratamientoStringify:",
+          JSON.stringify(dataTratamiento)
+        );
+        console.log("tratamiento", tratamiento);
+
+        userTratamientosService.updateData(dataTratamiento).then((response) => {
+          console.log("response: ", response);
+        });
       }
       console.log("tratamiento.permisos.length: ", tratamiento.permisos.length);
       console.log("arrayRechazoPermisos.length: ", arrayRechazoPermisos.length);
