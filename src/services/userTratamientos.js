@@ -2,6 +2,11 @@ import axios from "axios";
 const baseUrl1 = "http://localhost:8000/api/users/getTreatmentsEnterprises";
 const baseUrl2 = "http://localhost:8000/api/users/getTreatmentEnterprise";
 
+const baseUrl3 = "http://localhost:8000/api/users/updateTreatmente";
+const baseUrl4 = "http://localhost:8000/api/users/deleteConsent";
+
+const baseUrl5 = "http://localhost:8000/api/users/updateData";
+
 let token = null;
 let idUser = null;
 
@@ -32,4 +37,39 @@ const getOne = async (id) => {
   return response.data;
 };
 
-export default { setId, setToken, getAll, getOne };
+const update = async (id, data) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("token", token);
+  const response = await axios.put(`${baseUrl3}/${id}`, data, config);
+  return response.data;
+};
+
+const deleteConsent = async (idConsent) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("token", token);
+  const response = await axios.delete(`${baseUrl4}/${idConsent}`, config);
+  return response.data;
+};
+
+const updateData = async (data) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  console.log("token", token);
+  const response = await axios.put(`${baseUrl5}/${idUser}`, data, config);
+  return response.data;
+};
+
+export default {
+  setId,
+  setToken,
+  getAll,
+  getOne,
+  update,
+  deleteConsent,
+  updateData,
+};

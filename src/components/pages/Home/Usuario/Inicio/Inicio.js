@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
 
+import {
+  globales,
+  inicioUsuario,
+  tratamientoConstantes,
+} from "../../../../../constants/nombresConstantes";
+import { opcionesData } from "../../../../../constants/opcionesData";
+
 import InformacionUnitario from "./InformacionUnitario";
 
 import userTratamientosService from "../../../../../services/userTratamientos";
@@ -20,15 +27,15 @@ const Inicio = () => {
   useEffect(() => {
     userTratamientosService.getAll().then((tratamientos) => {
       setData(tratamientos);
-      console.log("tratamientos: ", tratamientos);
+      //console.log("tratamientos: ", tratamientos);
     });
   }, []);
 
   const handleVerDatos = (id) => {
-    console.log("idTreatement", id);
+    //console.log("idTreatement", id);
     userTratamientosService.getOne(id).then((tratamiento) => {
       setTratamiento(tratamiento);
-      console.log("tratamiento: ", tratamiento);
+      //console.log("tratamiento: ", tratamiento);
       //setDatatratamiento(tratamiento.data);
       //console.log("tratamiento.data: ", tratamiento.data);
       let objectData = {};
@@ -41,7 +48,7 @@ const Inicio = () => {
       });
       setDatatratamiento(objectData);
       setDatatratamientoOriginal(objectData);
-      console.log("newDataCorreo: ", objectData);
+      //console.log("newDataCorreo: ", objectData);
       setMostrarInformacion(true);
 
       const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
@@ -55,19 +62,19 @@ const Inicio = () => {
   const arrayRechazoPermisos = [];
 
   const handleRechazarTratamiento = (idTratamiento) => {
-    console.log("idTratamiento: ", idTratamiento);
+    //console.log("idTratamiento: ", idTratamiento);
     arrayRechazoPermisos.push(idTratamiento);
     console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
   };
   const handleCancelarTratamiento = (idTratamiento) => {
-    console.log("idTratamiento: ", idTratamiento);
+    //console.log("idTratamiento: ", idTratamiento);
     const index = arrayRechazoPermisos.indexOf(idTratamiento);
     arrayRechazoPermisos.splice(index, 1);
     console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
   };
 
   const handleRechazarTodosLosTratamientos = () => {
-    console.log("rechazar todo de: ", tratamiento._id);
+    //console.log("rechazar todo de: ", tratamiento._id);
     setDatatratamiento(datatratamientoOriginal);
     setMostrarInformacion(false);
   };
@@ -75,7 +82,7 @@ const Inicio = () => {
   const handleNewDataTratamiento = (data) => {
     const newData = { ...datatratamiento, ...data };
     setDatatratamiento(newData);
-    console.log("newDataCorreo: ", newData);
+    //console.log("newDataCorreo: ", newData);
   };
 
   const handleBotonEditar = () => {
@@ -88,20 +95,84 @@ const Inicio = () => {
   };
 
   const handleGuardarCambios = () => {
-    console.log("handleGuardarCambios+++++++++++++++++++++++++++++++");
-    console.log("datatratamientoOriginal: ", datatratamientoOriginal);
-    console.log("datatratamiento: ", datatratamiento);
-    console.log("data: ", data);
-    console.log("tratamiento: ", tratamiento);
-    console.log("arrayRechazoPermisos: ", arrayRechazoPermisos);
-    console.log("+++++++++++++++++++++++++++++++");
+    const dataDiferente = {};
+    for (const key in datatratamiento) {
+      if (datatratamiento[key] !== datatratamientoOriginal[key]) {
+        dataDiferente[key] = datatratamiento[key];
+      }
+    }
+    if (
+      Object.keys(dataDiferente).length > 0 ||
+      arrayRechazoPermisos.length > 0
+    ) {
+      if (Object.keys(dataDiferente).length > 0) {
+        const dataTratamiento = { data: dataDiferente };
+        console.log("si hay cambios en los valores");
+        console.log("dataTratamientoEnviar:", dataTratamiento);
+        //console.log(tratamiento._id);
+        userTratamientosService
+          .updateData(tratamiento._id, dataTratamiento)
+          .then((response) => {
+            console.log("response: ", response);
+          });
+      }
+      console.log("tratamiento.permisos.length: ", tratamiento.permisos.length);
+      console.log("arrayRechazoPermisos.length: ", arrayRechazoPermisos.length);
+      if (arrayRechazoPermisos.length === tratamiento.permisos.length) {
+        userTratamientosService
+          .deleteConsent(tratamiento._id)
+          .then((response) => {
+            console.log("response: ", response);
+
+            const newData = data.filter((item) => {
+              return item._id !== tratamiento._id;
+            });
+            setData(newData);
+          });
+      } else if (arrayRechazoPermisos.length > 0) {
+        const tratamientosAEliminar = {
+          treatmentsToEliminate: arrayRechazoPermisos,
+        };
+        console.log("si hay rechazos");
+        console.log("tratamientosAEliminar:", tratamientosAEliminar);
+        userTratamientosService
+          .update(tratamiento._id, tratamientosAEliminar)
+          .then((response) => {
+            console.log("response: ", response);
+          });
+      }
+
+      handleCancelarEdicion();
+      setMostrarInformacion(false);
+    } else {
+      console.log("no hay cambios en los valores");
+    }
+  };
+
+  const retornarLabel = (value) => {
+    //console.log("value: ", value);
+    const response = opcionesData.find((item) => {
+      return item.value === value;
+    });
+    //console.log("response: ", response);
+
+    if (response !== undefined) {
+      return response.label;
+    } else {
+      return value;
+    }
   };
 
   const verInformacion = () => {
     return (
-      <div>
-        <h1>Informacion</h1>
-        <h2>Empresa: {tratamiento.empresa.name}</h2>
+      <div className="container">
+        <h1>{tratamientoConstantes.lblTituloTratamiento}</h1>
+        <div className="bg-white rounded p-3">
+          <h2>
+            {tratamientoConstantes.lbltituloEmpresa} {tratamiento.empresa.name}
+          </h2>
+        </div>
+
         <div className="p-3 d-flex justify-content-end ">
           {editar ? (
             <div className="btn-group">
@@ -111,7 +182,7 @@ const Inicio = () => {
                   handleCancelarEdicion();
                 }}
               >
-                Cancelar Edición
+                {inicioUsuario.btnCancelarEdicion}
               </button>
               <button
                 className="btn btn-danger"
@@ -119,7 +190,7 @@ const Inicio = () => {
                   handleRechazarTodosLosTratamientos();
                 }}
               >
-                Rechazar Todos los Tratamientos
+                {globales.btnRecharzarTodoElTratamiento}
               </button>
             </div>
           ) : (
@@ -130,7 +201,7 @@ const Inicio = () => {
                   setMostrarInformacion(false);
                 }}
               >
-                Cancelar
+                {globales.btnCancelar}
               </button>
               <button
                 className="btn btn-primary"
@@ -138,7 +209,7 @@ const Inicio = () => {
                   console.log("exportar");
                 }}
               >
-                Exportar
+                {globales.btnExportar}
               </button>
               <button
                 className="btn btn-warning"
@@ -146,7 +217,7 @@ const Inicio = () => {
                   handleBotonEditar();
                 }}
               >
-                Editar
+                {globales.btnEditar}
               </button>
             </div>
           )}
@@ -155,39 +226,40 @@ const Inicio = () => {
           <div className="row">
             <div className="col-6">
               <div className="bg-white rounded p-3">
-                <h3>Tratamiento</h3>
-                <h3>Fecha Fin</h3>
-                <div>
+                <form>
+                  <h3 className="form-label">
+                    {tratamientoConstantes.lblFechaFin}
+                  </h3>
                   <input
+                    className="form-control mb-3"
                     type={"date"}
                     value={fechaFin}
                     disabled={!editar}
                     onChange={(e) => {
-                      console.log("e.target.value: ", e.target.value);
+                      //console.log("e.target.value: ", e.target.value);
                       setFechaFin(e.target.value);
                     }}
                   ></input>
-                </div>
-
-                {tratamiento.permisos.map((item, index) => (
-                  <TratamientoInformacion
-                    key={index}
-                    item={item}
-                    handleEditar={editar}
-                    handleRechazarTratamiento={handleRechazarTratamiento}
-                    handleCancelarTratamiento={handleCancelarTratamiento}
-                  />
-                ))}
+                  {tratamiento.permisos.map((item, index) => (
+                    <TratamientoInformacion
+                      key={index}
+                      item={item}
+                      handleEditar={editar}
+                      handleRechazarTratamiento={handleRechazarTratamiento}
+                      handleCancelarTratamiento={handleCancelarTratamiento}
+                    />
+                  ))}
+                </form>
               </div>
             </div>
             <div className="col-6">
               <div className="bg-white rounded p-3">
-                <h3>Datos Necesarios</h3>
+                <h3>{tratamientoConstantes.lblInformacionTratamiento}</h3>
                 <form>
                   {tratamiento.data.map((itemData, itemDataIndex) => (
                     <div key={itemDataIndex} className="mb-3">
                       <label className="form-label" htmlFor={itemDataIndex}>
-                        {itemData.tipo}:{" "}
+                        {retornarLabel(itemData.tipo)}:
                       </label>
                       <input
                         className="form-control"
@@ -227,8 +299,8 @@ const Inicio = () => {
 
   const informacion = () => {
     return (
-      <div>
-        <h1>Home</h1>
+      <div className="container">
+        <h1>{inicioUsuario.lblTituloTratamientos}</h1>
         <div className="d-flex justify-content-around"></div>
         {data.length > 0 ? (
           data.map((item) => (

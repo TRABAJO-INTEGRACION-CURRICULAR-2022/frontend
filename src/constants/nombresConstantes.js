@@ -60,6 +60,7 @@ const globales = {
   btnRechazar: "Rechazar",
   btnSiguiente: "Siguiente",
   btnAceptar: "Aceptar",
+  btnEditar: "Editar",
 
   lblMensajeErrorConexion: "Error de conexión, intentelo más tarde",
 
@@ -80,6 +81,8 @@ const tratamientoConstantes = {
   lblAsunto: "Asunto",
   btnAniadirTratamiento: "Añadir Tratamiento +",
   lblTratamientos: "Tratamientos:",
+
+  lblTituloTratamiento: "Descripción del Tratamiento:",
 };
 
 const correoUsuario = {
@@ -91,6 +94,10 @@ const correoUsuario = {
   lblDatosCorreo: "Datos del Correo",
 };
 
+const inicioUsuario = {
+  lblTituloTratamientos: "Tratamientos:",
+  btnCancelarEdicion: "Cancelar Edición",
+};
 // export const LabelNames = {
 //   //Empresa
 //   //-Menu:
@@ -151,4 +158,5 @@ export {
   bloque,
   tratamientoConstantes,
   correoUsuario,
+  inicioUsuario,
 };
