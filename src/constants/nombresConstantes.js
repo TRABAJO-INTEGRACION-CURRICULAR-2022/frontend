@@ -72,6 +72,7 @@ const bloque = {};
 
 const tratamientoConstantes = {
   lbltituloEmpresa: "Empresa: ",
+  lblUsuario: "Usuario: ",
   lblHoraRecibido: "Recibido: ",
 
   lblTituloTratamientos: "Tratamientos: ",

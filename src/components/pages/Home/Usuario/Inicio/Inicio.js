@@ -75,8 +75,15 @@ const Inicio = () => {
 
   const handleRechazarTodosLosTratamientos = () => {
     //console.log("rechazar todo de: ", tratamiento._id);
-    setDatatratamiento(datatratamientoOriginal);
-    setMostrarInformacion(false);
+    userTratamientosService.deleteConsent(tratamiento._id).then((response) => {
+      console.log("response: ", response);
+
+      const newData = data.filter((item) => {
+        return item._id !== tratamiento._id;
+      });
+      setData(newData);
+      setMostrarInformacion(false);
+    });
   };
 
   const handleNewDataTratamiento = (data) => {

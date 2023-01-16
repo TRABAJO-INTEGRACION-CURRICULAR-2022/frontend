@@ -2,9 +2,15 @@ import React, { useState, useEffect } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
-import { correoEmpresa } from "../../../../../constants/nombresConstantes";
+import { opcionesData } from "../../../../../constants/opcionesData";
 
-import empresaService from "../../../../../services/empresaCorreos";
+import {
+  correoEmpresa,
+  globales,
+  tratamientoConstantes,
+} from "../../../../../constants/nombresConstantes";
+
+import empresaCorreoaService from "../../../../../services/empresaCorreos";
 
 import CrearCorreo from "./CrearCorreo";
 import CorreoUnitario from "./CorreoUnitario";
@@ -13,31 +19,75 @@ import Tratamientos from "./Tratamientos/Tratamientos";
 
 const Correo = () => {
   const [crearCorreo, setCrearCorreo] = useState(false);
+  const [verCorreo, setVerCorreo] = useState(false);
   const [correos, setCorreos] = useState([]);
+  const [correo, setCorreo] = useState({});
+  const [dataUsada, setDataUsada] = useState([]);
 
   useEffect(() => {
-    // empresaService.getAllCorreos().then((correos) => {
-    //   //console.log("correos: ", correos)
-    //   //setCorreos(correos);
-    // });
+    empresaCorreoaService
+      .getAllCorreos()
+      .then((correos) => {
+        setCorreos(correos);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+        setCorreos([]);
+      });
   }, []);
 
   const handleNuevoCorreoAtras = () => {
     setCrearCorreo(!crearCorreo);
+    setVerCorreo(false);
   };
 
   const handleVerCorreo = (correoId) => {
     console.log("correoId: ", correoId);
+    setVerCorreo(!verCorreo);
+
+    const newCorreo = correos.find((correo) => {
+      return correo._id === correoId;
+    });
+
+    const nuevadata2 = newCorreo.permisos.reduce((acum, item) => {
+      const newData1 = item.data.map((item1) => {
+        //just return if it is not repeated
+        if (acum.indexOf(item1) === -1) {
+          return item1;
+        }
+      });
+      return [...acum, ...newData1];
+    }, []);
+
+    //delete undefined
+    const nuevaData3 = nuevadata2.filter((item) => {
+      return item !== undefined;
+    });
+
+    setDataUsada(nuevaData3);
+    setCorreo(newCorreo);
+  };
+
+  const retornarLabel = (value) => {
+    //console.log("value: ", value);
+    const response = opcionesData.find((item) => {
+      return item.value === value;
+    });
+    //console.log("response: ", response);
+
+    if (response !== undefined) {
+      return response.label;
+    } else {
+      return value;
+    }
   };
 
   const correosEnviadosRender = () => {
     return (
       <div>
         <h1>{correoEmpresa.lblTituloCorreos}</h1>
-
         <div>
           <button
-            hidden={crearCorreo}
             onClick={() => {
               handleNuevoCorreoAtras();
             }}
@@ -45,9 +95,10 @@ const Correo = () => {
             {correoEmpresa.btnNuevoCorreo}
           </button>
         </div>
+        {console.log("correos length: ", correos)}
         {correos.length > 0 ? (
           correos.map((correo) => (
-            <div className="bg-white rounded p-3 mb-2">
+            <div key={correo._id} className="bg-white rounded p-3 mb-2">
               <CorreoUnitario
                 key={correo._id}
                 correo={correo}
@@ -64,17 +115,65 @@ const Correo = () => {
     );
   };
 
-  const nuevoCorreoRender = () => {};
+  const verCorreoEnviadoRender = () => {
+    return (
+      <div>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            handleVerCorreo();
+          }}
+        >
+          {globales.btnRegresar}
+        </button>
+        <div className="">
+          <form>
+            <h4 className="form-label">{tratamientoConstantes.lblUsuario}</h4>
+            <p className="form-control">{correo.usuario.name}</p>
+            <h4 className="form-label">{tratamientoConstantes.lblAsunto}</h4>
+            <p className="form-control">
+              {correo.obsevaciones === "" ? "No hay" : correo.obsevaciones}
+            </p>
+            <h4 className="form-label">
+              {tratamientoConstantes.lblDescripcionTratamiento}
+            </h4>
+            <p className="form-control">{correo.descripcionConcentimiento}</p>
+            <h4 className="form-label">
+              {tratamientoConstantes.lblInformacionTratamiento}
+            </h4>
+            <div className="form-control">
+              <ul className="list-group list-group-flush">
+                {console.log("dataUsada: ", dataUsada)}
+                {dataUsada.map((item) => (
+                  <li className="list-group-item" key={item}>
+                    {retornarLabel(item)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  const opcion1Render = () => {
+    return (
+      <div>
+        {crearCorreo ? (
+          <CrearCorreo handleNuevoCorreoAtras={handleNuevoCorreoAtras} />
+        ) : (
+          correosEnviadosRender()
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div>
+    <div className="container">
       <Tabs defaultActiveKey="correos" id="uncontrolled-tab-example">
         <Tab eventKey="correos" title={correoEmpresa.lblSubmenu1}>
-          {crearCorreo ? (
-            <CrearCorreo handleNuevoCorreoAtras={handleNuevoCorreoAtras} />
-          ) : (
-            correosEnviadosRender()
-          )}
+          {verCorreo ? verCorreoEnviadoRender() : opcion1Render()}
         </Tab>
         <Tab eventKey="crearTratamientos" title={correoEmpresa.lblSubmenu2}>
           <Tratamientos />

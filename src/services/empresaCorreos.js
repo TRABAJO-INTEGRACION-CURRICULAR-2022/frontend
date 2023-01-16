@@ -5,6 +5,9 @@ const baseUrl3 = "http://localhost:8000/api/enterprises/getTreatment"; //obtener
 
 const baseUrl4 = "http://localhost:8000/api/enterprises/createEmail"; //enviar correo
 
+const baseUrl5 =
+  "http://localhost:8000/api/enterprises/getEmailsDoesntAnswered"; //obtener correos enviados
+
 let token = null;
 let id = null;
 
@@ -84,6 +87,19 @@ const getOneTreatment = async (id) => {
   return response.data;
 };
 
+const getAllCorreos = async () => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  //console.log("token", token);
+  const response = await axios.get(`${baseUrl5}/${id}`, config);
+  if (response.data.emails === undefined) {
+    return [];
+  } else {
+    return response.data.emails;
+  }
+};
+
 export default {
   getAll,
   setId,
@@ -93,4 +109,5 @@ export default {
   createTreatment,
   getAllTreatments,
   getOneTreatment,
+  getAllCorreos,
 };

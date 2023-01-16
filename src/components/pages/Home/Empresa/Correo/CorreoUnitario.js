@@ -1,13 +1,22 @@
 import React from "react";
 
 const CorreoUnitario = ({ correo, handleVerCorreo }) => {
+  const fecha = (fecha) => {
+    if (fecha === undefined) {
+      return "Sin fecha";
+    }
+    const fecha2 = fecha.split(",");
+    //console.log("fecha2: ", fecha2);
+    return fecha2[0];
+  };
+
   return (
     <>
       <div
         className="d-flex justify-content-center"
         onClick={() => {
-          console.log("ver correo: ", correo.id);
-          handleVerCorreo(correo.id);
+          //console.log("ver correo: ", correo._id);
+          handleVerCorreo(correo._id);
         }}
       >
         <div
@@ -17,7 +26,7 @@ const CorreoUnitario = ({ correo, handleVerCorreo }) => {
               : "p-2 flex-fill bd-highlight"
           }
         >
-          {correo.nombreUsuario}
+          {correo.usuario.name}
         </div>
         <div
           className={
@@ -26,7 +35,7 @@ const CorreoUnitario = ({ correo, handleVerCorreo }) => {
               : "p-2 flex-fill bd-highlight"
           }
         >
-          {correo.descrpcion}
+          {correo.descripcionConcentimiento}
         </div>
         <div
           className={
@@ -35,7 +44,7 @@ const CorreoUnitario = ({ correo, handleVerCorreo }) => {
               : "ms-auto p-2 bd-highlight"
           }
         >
-          {"falta pone rla fecha en el api"}
+          {fecha(correo.fechaEnvio)}
         </div>
       </div>
       <hr className="bg-danger border-2 border-top border-dark" />

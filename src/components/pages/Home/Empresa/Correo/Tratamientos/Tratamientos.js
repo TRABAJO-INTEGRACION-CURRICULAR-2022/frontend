@@ -59,10 +59,10 @@ const Tratamientos = () => {
         </div>
         <div>
           {tratamientos.length > 0 ? (
-            tratamientos.map((tratamiento, index) => (
-              <div className="bg-white rounded p-3 mb-2">
+            tratamientos.map((tratamiento) => (
+              <div key={tratamiento._id} className="bg-white rounded p-3 mb-2">
                 <TratamientoUnitario
-                  key={index}
+                  key={tratamiento._id}
                   tratamiento={tratamiento}
                   handleEditarTratamiento={handleEditarTratamiento}
                 />

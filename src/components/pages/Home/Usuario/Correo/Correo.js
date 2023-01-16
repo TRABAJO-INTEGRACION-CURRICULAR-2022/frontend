@@ -11,6 +11,7 @@ import {
 import correosService from "../../../../../services/userCorreos";
 import CorreoUnitario from "./CorreoUnitario";
 import TratamientoCorreo from "./TratamientoCorreo";
+import userTratamientosService from "../../../../../services/userTratamientos";
 
 const Correo = () => {
   const [correos, setCorreos] = useState([]);
@@ -155,6 +156,13 @@ const Correo = () => {
     console.log("enviarSolicitud: ", JSON.stringify(enviarSolicitud));
     console.log("correo", correo);
 
+    const dataDiferente = {};
+    for (const key in datatratamientoOriginal) {
+      if (datatratamiento[key] !== datatratamientoOriginal[key]) {
+        dataDiferente[key] = datatratamiento[key];
+      }
+    }
+
     correosService
       .enviarCorreoConsentimiento(correo._id, enviarSolicitud)
       .then((response) => {
@@ -164,6 +172,33 @@ const Correo = () => {
         });
         console.log("newCorreos: ", newCorreos);
         console.log("response enviarCorreoConsentimiento: ", response);
+
+        if (Object.keys(dataDiferente).length > 0) {
+          const arrayDataDiferente = [];
+          for (const key in dataDiferente) {
+            const data = {
+              tipo: key,
+              valor: dataDiferente[key],
+            };
+            arrayDataDiferente.push(data);
+          }
+
+          const dataTratamiento = { data: arrayDataDiferente };
+
+          console.log("si hay cambios en los valores");
+          console.log("dataTratamientoEnviar:", dataTratamiento);
+          console.log(
+            "dataTratamientoStringify:",
+            JSON.stringify(dataTratamiento)
+          );
+
+          userTratamientosService
+            .updateData(dataTratamiento)
+            .then((response) => {
+              console.log("response: ", response);
+            });
+        }
+
         setMostrarInformacion(false);
         setPermisosTratamiento([]);
         setMostrarInformacion(false);
@@ -171,24 +206,11 @@ const Correo = () => {
         setDatatratamiento({});
         setTextoBoton(globales.btnSiguiente);
         setCorreo([]);
+        setCorreos(newCorreos);
       })
       .catch((error) => {
         console.log("error: ", error);
       });
-
-    // const newCorreo = { ...correo, respondido: true };
-    // const newCorreos = correos.map((correo) => {
-    //   if (correo._id === newCorreo._id) {
-    //     return newCorreo;
-    //   } else {
-    //     return correo;
-    //   }
-    // });
-    // setCorreos(newCorreos);
-    // //falta decir a correos que cambio el correo
-    // setCorreo([]);
-    // setPermisosTratamiento([]);
-    // setMostrarInformacion(false);
   };
 
   const handleCancelarVerCorreo = () => {
