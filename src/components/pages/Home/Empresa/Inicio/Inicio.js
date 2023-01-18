@@ -87,6 +87,16 @@ const Inicio = () => {
     });
   }, []);
 
+  const formatearFechaHtml = (fecha) => {
+    const fechaArray = fecha.split("/");
+    const fechaFormateada = new Date(
+      fechaArray[2],
+      fechaArray[1] - 1,
+      fechaArray[0]
+    );
+    return fechaFormateada.toISOString().split("T")[0];
+  };
+
   const handleVerDatos = (id) => {
     console.log(`handle ver datos empresa id: ${id}`);
     empresaTratamientosService.getOne(id).then((tratamiento) => {
@@ -106,10 +116,10 @@ const Inicio = () => {
       console.log("dataTratamientoTemporal: ", dataTratamientoTemporal);
       setMostrarInformacion("tratamiento");
 
-      const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
-      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
-      console.log("fechaFinTratamiento: ", fechaFinTratamiento);
-      setFechaFin(fechaFinTratamiento);
+      console.log("tratamiento", tratamiento);
+      const fechaFormateada = formatearFechaHtml(tratamiento.fecha_fin);
+
+      setFechaFin(fechaFormateada);
     });
   };
 
@@ -259,7 +269,7 @@ const Inicio = () => {
 
                 <h3>Fecha Fin</h3>
                 <div>
-                  <input type={"date"} value={fechaFin} disabled={true}></input>
+                  <input type="date" value={fechaFin} disabled={true}></input>
                 </div>
                 {tratamientoSolicitado.consent.permisos.map(
                   (permiso, index) => (

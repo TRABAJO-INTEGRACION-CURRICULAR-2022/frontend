@@ -31,6 +31,16 @@ const Inicio = () => {
     });
   }, []);
 
+  const formatearFechaHtml = (fecha) => {
+    const fechaArray = fecha.split("/");
+    const fechaFormateada = new Date(
+      fechaArray[2],
+      fechaArray[1] - 1,
+      fechaArray[0]
+    );
+    return fechaFormateada.toISOString().split("T")[0];
+  };
+
   const handleVerDatos = (id) => {
     //console.log("idTreatement", id);
     userTratamientosService.getOne(id).then((tratamiento) => {
@@ -51,11 +61,10 @@ const Inicio = () => {
       //console.log("newDataCorreo: ", objectData);
       setMostrarInformacion(true);
 
-      const fechaArray = tratamiento.fechaFinConsentimeinto.split("/");
-
-      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
-      //console.log("fechaFinTratamiento: ", fechaFinTratamiento);
-      setFechaFin(fechaFinTratamiento);
+      const fechaFormateada = formatearFechaHtml(
+        tratamiento.fechaFinConsentimeinto
+      );
+      setFechaFin(fechaFormateada);
     });
   };
 

@@ -99,7 +99,7 @@ function App() {
       console.log("entro user");
       return (
         <>
-          <Route path="/" element={<Home />} />
+          <Route path="/informacion" element={<Home />} />
           <Route path="/inicio" element={<InicioUsuario />} />
           <Route path="/correo" element={<CorreoUsuario />} />
         </>
@@ -108,7 +108,7 @@ function App() {
       console.log("entro empresa");
       return (
         <>
-          <Route path="/" element={<Home />} />
+          <Route path="/informacion" element={<Home />} />
           <Route path="/inicio" element={<InicioEmpresa />} />
           <Route path="/correo" element={<CorreoEmpresa />} />
         </>
