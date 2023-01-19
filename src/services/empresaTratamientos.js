@@ -5,9 +5,7 @@ const baseUrl3 = "http://localhost:8000/api/enterprises/getUsersByTreatment"; //
 
 const baseUrl4 = "http://localhost:8000/api/enterprises/exportAllEnterprise"; //exportar todos los usuarios de una empresa
 const baseUrl5 = "http://localhost:8000/api/enterprises/exportData"; //exportar datos de un usuario
-const baseUrl6 = "http://localhost:8000/api/enterprises/getUsersByTreatment"; //exportar usuarios por tratamiento
-
-const baseUrl7 = "http://localhost:8000/api/enterprises/getUsersByTreatment"; //exportar usuarios por tratamiento
+const baseUrl6 = "http://localhost:8000/api/enterprises/exportDatabyTreatment"; //exportar usuarios por tratamiento
 
 const baseUrl8 = "http://localhost:8000/api/enterprises/getBlockChain"; //obtener blockcahin
 
@@ -59,19 +57,19 @@ const exportAllEnterprise = async (ext) => {
   };
   console.log("token", token);
   const response = await axios.get(`${baseUrl4}/${idUser}/${ext}`, config);
-  return response.data;
+  return response;
 };
 
-const exportOneUser = async (id, ext) => {
+const exportOneUser = async (idRequestUser, idRequestEnterprise, ext) => {
   const config = {
     headers: { Authorization: token },
   };
   console.log("token", token);
   const response = await axios.get(
-    `${baseUrl5}/${idUser}/${id}/${ext}`,
+    `${baseUrl5}/${idRequestEnterprise}/${idRequestUser}/${ext}`,
     config
   );
-  return response.data;
+  return response;
 };
 
 const exportUsersByTreatment = async (nombreTratamiento, ext) => {
@@ -80,10 +78,10 @@ const exportUsersByTreatment = async (nombreTratamiento, ext) => {
   };
   console.log("token", token);
   const response = await axios.get(
-    `${baseUrl6}/${idUser}/${nombreTratamiento}`,
+    `${baseUrl6}/${idUser}/${nombreTratamiento}/${ext}`,
     config
   );
-  return response.data;
+  return response;
 };
 
 const getBlockChain = async (id) => {

@@ -12,6 +12,8 @@ import InformacionUnitario from "./InformacionUnitario";
 import userTratamientosService from "../../../../../services/userTratamientos";
 import TratamientoInformacion from "./TratamientoInformacion";
 
+import BotonExportar from "../../../../../components/buttons/BotonExportar";
+
 const Inicio = () => {
   const [data, setData] = useState([]);
   const [tratamiento, setTratamiento] = useState({});
@@ -224,25 +226,28 @@ const Inicio = () => {
               </button>
             </div>
           ) : (
-            <div className="btn-group">
+            <div>
               <button
-                className="btn btn-secondary"
+                className="m-2 btn btn-secondary"
                 onClick={() => {
                   setMostrarInformacion(false);
                 }}
               >
                 {globales.btnCancelar}
               </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  console.log("exportar");
+              {console.log("tratamiento, ", tratamiento)}
+              <BotonExportar
+                className="m-2  btn btn-warning"
+                modoExportar={2}
+                id={() => {
+                  return {
+                    idRequestUser: tratamiento.usuario.id,
+                    idRequestEnterprise: tratamiento.empresa.id,
+                  };
                 }}
-              >
-                {globales.btnExportar}
-              </button>
+              ></BotonExportar>
               <button
-                className="btn btn-warning"
+                className=" m-2 btn btn-warning"
                 onClick={() => {
                   handleBotonEditar();
                 }}
@@ -349,7 +354,7 @@ const Inicio = () => {
     );
   };
 
-  return <>{mostrarInformacion ? verInformacion() : informacion()}</>;
+  return <div>{mostrarInformacion ? verInformacion() : informacion()}</div>;
 };
 
 export default Inicio;
