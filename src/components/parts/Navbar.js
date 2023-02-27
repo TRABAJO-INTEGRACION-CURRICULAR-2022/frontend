@@ -7,8 +7,8 @@ export default function Navbar({ user }) {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            Navbar
+          <a className="navbar-brand" href="informacion">
+            Proyecto
           </a>
           <button
             className="navbar-toggler"
@@ -71,8 +71,8 @@ export default function Navbar({ user }) {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            Navbar
+          <a className="navbar-brand" href="inicioSesion">
+            Proyecto
           </a>
           <button
             className="navbar-toggler"
@@ -88,11 +88,6 @@ export default function Navbar({ user }) {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/">
-                  Home
-                </a>
-              </li>
-              <li className="nav-item">
                 <a
                   className="nav-link active"
                   aria-current="page"
@@ -105,7 +100,7 @@ export default function Navbar({ user }) {
                 <a
                   className="nav-link active"
                   aria-current="page"
-                  href="inicioSesion"
+                  href="registro"
                 >
                   Registrarse
                 </a>

@@ -54,7 +54,7 @@ const BotonExportar = ({ modoExportar, id }) => {
   };
 
   return (
-    <button className="btn">
+    <div className="btn">
       <Dropdown
         onSelect={(tipo) => {
           solicitud(tipo);
@@ -67,9 +67,10 @@ const BotonExportar = ({ modoExportar, id }) => {
         <Dropdown.Menu>
           <Dropdown.Item eventKey="csv">.csv</Dropdown.Item>
           <Dropdown.Item eventKey="xlsx">.xlsx</Dropdown.Item>
+          <Dropdown.Item eventKey="json">.json</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-    </button>
+    </div>
   );
 };
 

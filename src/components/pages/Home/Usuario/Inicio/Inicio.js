@@ -34,12 +34,14 @@ const Inicio = () => {
   }, []);
 
   const formatearFechaHtml = (fecha) => {
+    console.log("Ahora: ", fecha);
     const fechaArray = fecha.split("/");
     const fechaFormateada = new Date(
       fechaArray[2],
       fechaArray[1] - 1,
       fechaArray[0]
     );
+    console.log("Ahora: ", fechaFormateada);
     return fechaFormateada.toISOString().split("T")[0];
   };
 

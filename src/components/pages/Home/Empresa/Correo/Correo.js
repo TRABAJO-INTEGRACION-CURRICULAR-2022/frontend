@@ -49,23 +49,29 @@ const Correo = () => {
       return correo._id === correoId;
     });
 
-    const nuevadata2 = newCorreo.permisos.reduce((acum, item) => {
-      const newData1 = item.data.map((item1) => {
-        //just return if it is not repeated
-        if (acum.indexOf(item1) === -1) {
-          return item1;
-        }
+    if (newCorreo) {
+      const nuevadata2 = newCorreo.permisos.reduce((acum, item) => {
+        const newData1 = item.data.map((item1) => {
+          //just return if it is not repeated
+          if (acum.indexOf(item1) === -1) {
+            return item1;
+          } else {
+            return undefined;
+          }
+        });
+        return [...acum, ...newData1];
+      }, []);
+
+      console.log("nuevadata2: ", nuevadata2);
+
+      //delete undefined
+      const nuevaData3 = nuevadata2.filter((item) => {
+        return item !== undefined;
       });
-      return [...acum, ...newData1];
-    }, []);
 
-    //delete undefined
-    const nuevaData3 = nuevadata2.filter((item) => {
-      return item !== undefined;
-    });
-
-    setDataUsada(nuevaData3);
-    setCorreo(newCorreo);
+      setDataUsada(nuevaData3);
+      setCorreo(newCorreo);
+    }
   };
 
   const retornarLabel = (value) => {
@@ -117,7 +123,7 @@ const Correo = () => {
 
   const verCorreoEnviadoRender = () => {
     return (
-      <div>
+      <div className="mt-3">
         <button
           className="btn btn-primary"
           onClick={() => {
@@ -150,6 +156,36 @@ const Correo = () => {
                   </li>
                 ))}
               </ul>
+            </div>
+            <h4 className="form-label mt-2">
+              {tratamientoConstantes.lblTituloTratamientos}
+            </h4>
+            <div className=" col-10">
+              {correo.permisos.map((permiso) => (
+                <div key={permiso._id} className="bg-white rounded p-3 mb-2">
+                  <h5 className="form-label">
+                    {tratamientoConstantes.lblTratamiento}
+                  </h5>
+                  {console.log("permiso: ", permiso)}
+                  <p className="form-control">{permiso.tipo}</p>
+                  <h5 className="form-label">
+                    {tratamientoConstantes.lblDescripcionTratamiento}
+                  </h5>
+                  <p className="form-control">{permiso.descripcion}</p>
+                  <h5 className="form-label">
+                    {tratamientoConstantes.lblInformacionTratamiento}
+                  </h5>
+                  <div className="form-control">
+                    <ul className="list-group list-group-flush">
+                      {permiso.data.map((item) => (
+                        <li className="list-group-item" key={item}>
+                          {retornarLabel(item)}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
             </div>
           </form>
         </div>

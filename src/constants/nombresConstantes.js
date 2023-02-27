@@ -1,11 +1,11 @@
 const navBarEmpresa = {
-  lblMenu1: "Home",
+  lblMenu1: "Información",
   lblMenu2: "Inicio",
   lblMenu3: "Correo",
 };
 
 const navBarUsuario = {
-  lblMenu1: "Home",
+  lblMenu1: "Información",
   lblMenu2: "Inicio",
   lblMenu3: "Correo",
 };
@@ -82,6 +82,7 @@ const tratamientoConstantes = {
   lblAsunto: "Asunto",
   btnAniadirTratamiento: "Añadir Tratamiento +",
   lblTratamientos: "Tratamientos:",
+  lblTratamiento: "Tratamiento: ",
 
   lblTituloTratamiento: "Descripción del Tratamiento:",
 };

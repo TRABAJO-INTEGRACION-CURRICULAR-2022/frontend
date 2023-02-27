@@ -92,8 +92,8 @@ const LoginForm = ({ login }) => {
                   </button>
                   <p className="small fw-bold mt-2 pt-1 mb-0">
                     No tienes una cuenta?{" "}
-                    <a href="/" className="link-danger">
-                      Register
+                    <a href="/registro" className="link-danger">
+                      Registrarse
                     </a>
                   </p>
                 </div>
@@ -102,45 +102,6 @@ const LoginForm = ({ login }) => {
           </div>
         </div>
       </section>
-    </div>
-  );
-  return (
-    <div className="container">
-      <div>
-        <h2>Log in to application</h2>
-        <form onSubmit={loginUser}>
-          <div>
-            type
-            <select
-              value={tipo}
-              onChange={({ target }) => setTipo(target.value)}
-            >
-              <option value="">Seleccione una opcion</option>
-              <option value="user">Usuario</option>
-              <option value="empresa">Empresa</option>
-            </select>
-          </div>
-          <div>
-            mail
-            <input
-              type="text"
-              value={mail}
-              name="email"
-              onChange={({ target }) => setMail(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type="password"
-              value={password}
-              name="password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
     </div>
   );
 };

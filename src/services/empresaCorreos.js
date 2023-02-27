@@ -47,7 +47,8 @@ const enviarCorreo = async (correo) => {
   };
   //console.log("token", token);
   const response = await axios.post(`${baseUrl4}/${id}`, correo, config);
-  return response.data;
+  console.log("respuesta desde servicio: ", response);
+  return response;
 };
 
 //crear tratamiento

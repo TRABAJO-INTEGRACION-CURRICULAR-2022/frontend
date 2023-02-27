@@ -43,6 +43,27 @@ const Correo = () => {
     });
   }, []);
 
+  const formatearFechaHtml = (fecha) => {
+    const fechaArray = fecha.split("/");
+    const fechaFormateada = new Date(
+      fechaArray[2],
+      fechaArray[1] - 1,
+      fechaArray[0]
+    );
+
+    return fechaFormateada.toISOString().split("T")[0];
+  };
+
+  const formatearFechaHtml2 = (fecha) => {
+    //de aaaa-mm-aa a dd/mm/aaaa
+    console.log("fecha llegada: ", fecha);
+    const fechaArray = fecha.split("-");
+    console.log("fechaArray: ", fechaArray);
+    //unir con /
+    const fechaFormateada = `${fechaArray[2]}/${fechaArray[1]}/${fechaArray[0]}`;
+    return fechaFormateada;
+  };
+
   const handleVerCorreo = (correoId) => {
     console.log("correoId: ", correoId);
     correosService.getOne(correoId).then((correo) => {
@@ -52,11 +73,11 @@ const Correo = () => {
       console.log("permisosTratamiento: ", correo.permisos);
       console.log("permisosTratamiento original: ", correo.permisos);
       setMostrarInformacion(true);
-      const fechaArray = correo.fechaFin.split("/");
+      //const fechaArray = correo.fechaFin.split("/");
 
-      const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
-      console.log("fechaFinTratamiento: ", fechaFinTratamiento);
-      setFechaFin(fechaFinTratamiento);
+      //const fechaFinTratamiento = `${fechaArray[2]}-${fechaArray[1]}-${fechaArray[0]}`;
+      //console.log("fechaFinTratamiento: ", fechaFinTratamiento);
+      setFechaFin(correo.fechaFin);
       console.log("correo: ", correo);
     });
     // console.log("correo a mostrar: ", correo);
@@ -148,6 +169,7 @@ const Correo = () => {
     console.log("dataEnviar: ", dataEnviar);
 
     const enviarSolicitud = {
+      fechaFin: fechaFin,
       data: dataEnviar,
       permisos: permisosTratamiento,
     };
@@ -243,10 +265,12 @@ const Correo = () => {
             <input
               className="form-control"
               type={"date"}
-              value={fechaFin}
+              value={formatearFechaHtml(fechaFin)}
               onChange={(e) => {
                 console.log("e.target.value: ", e.target.value);
-                setFechaFin(e.target.value);
+
+                const newfecha = formatearFechaHtml2(e.target.value);
+                setFechaFin(newfecha);
               }}
             ></input>
           </div>

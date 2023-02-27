@@ -69,6 +69,10 @@ function App() {
         );
         empresaCorreosService.setId(empresaForLog.id);
         setEmpresa(empresaForLog);
+        window.localStorage.setItem(
+          "informacionUsuario",
+          JSON.stringify(empresaForLog)
+        );
       } else if (userObject.tipo === "user") {
         const userResponse = await loginService.usuarioLogin(userObject);
         const userForLog = {
@@ -88,9 +92,31 @@ function App() {
         );
         userCorreosService.setId(userForLog.id);
         setUser(userForLog);
+        window.localStorage.setItem(
+          "informacionUsuario",
+          JSON.stringify(userForLog)
+        );
       }
+      window.location.href = "/informacion";
     } catch (exception) {
       console.log("Wrong username or password", "alert");
+    }
+  };
+
+  const register = async (userObject) => {
+    console.log("userObject1: ", userObject);
+    try {
+      if (userObject.tipo === "empresa") {
+        const empresaResponse = await loginService.crearEmpresa(userObject);
+        console.log("empresaResponse: ", empresaResponse);
+        login(userObject);
+      } else if (userObject.tipo === "user") {
+        const userResponse = await loginService.crearUsuario(userObject);
+        console.log("userResponse: ", userResponse);
+        login(userObject);
+      }
+    } catch (exception) {
+      console.log("Usuario No creado");
     }
   };
 
@@ -119,9 +145,11 @@ function App() {
   const rutasNoLogeado = () => {
     return (
       <>
-        <Route path="/" element={<Home />} />
         <Route path="/inicioSesion" element={<LoginForm login={login} />} />
-        <Route path="/registrarse" element={<RegisterForm login={login} />} />
+        <Route
+          path="/registro"
+          element={<RegisterForm register={register} />}
+        />
       </>
     );
   };

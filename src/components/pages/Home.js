@@ -4,7 +4,6 @@ const Home = () => {
   const [tipoUsuario, setTipoUsuario] = useState("");
 
   const [usuario, setUsuario] = useState({});
-  const [empresa, setEmpresa] = useState({});
 
   useEffect(() => {
     const tipo = localStorage.getItem("loggedBlogappEmpresa");
@@ -13,24 +12,33 @@ const Home = () => {
     } else {
       setTipoUsuario("empresa");
     }
-  }, []);
 
-  useEffect(() => {
-    //consultar datos de usuario
+    const informacion = window.localStorage.getItem("informacionUsuario");
+    setUsuario(JSON.parse(informacion));
   }, []);
 
   const homeUsuarioRender = () => {
     return (
       <div className="container">
-        <div className="">
-          <h1>Datos del Usuario:</h1>
-        </div>
-        <h2>Perfil</h2>
-        <p>tipo de usuario: {tipoUsuario}</p>
+        <h1>Datos del Usuario:</h1>
         <form>
-          <label htmlFor="exampleInputEmail1">Nombre usuario</label>
-          <div className="form-control" id="exampleInputEmail1">
-            nombre usuario
+          <div className="form-group col-md-6">
+            <label htmlFor="exampleInputEmail1">Nombre usuario</label>
+            <div className="form-control" id="exampleInputEmail1">
+              {usuario.name} {usuario.lastName}
+            </div>
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="exampleInputEmail1">Cédula</label>
+            <div className="form-control" id="exampleInputEmail1">
+              {usuario.ci}
+            </div>
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="exampleInputEmail1">Correo Electrónico</label>
+            <div className="form-control" id="exampleInputEmail1">
+              {usuario.email}
+            </div>
           </div>
         </form>
       </div>
@@ -45,19 +53,19 @@ const Home = () => {
           <div className="form-group col-md-6">
             <label htmlFor="exampleInputEmail1">Nombre Empresa</label>
             <div className="form-control" id="exampleInputEmail1">
-              nombre empresa
+              {usuario.name}
             </div>
           </div>
           <div className="form-group col-md-6">
             <label htmlFor="exampleInputEmail1">RUC</label>
             <div className="form-control" id="exampleInputEmail1">
-              ruc aaaaa
+              {usuario.ruc}
             </div>
           </div>
           <div className="form-group col-md-6">
             <label htmlFor="exampleInputEmail1">Correo Electrónico</label>
             <div className="form-control" id="exampleInputEmail1">
-              correo
+              {usuario.email}
             </div>
           </div>
         </form>

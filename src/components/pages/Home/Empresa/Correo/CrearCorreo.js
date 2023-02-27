@@ -118,11 +118,19 @@ const CrearCorreo = ({ handleNuevoCorreoAtras }) => {
     console.log("Enviar Correo", data);
 
     empresaService.enviarCorreo(data).then((response) => {
-      console.log("response", response);
+      console.log("response: ", response);
+      if (response.status === 200) {
+        alert("Correo enviado");
+        console.log("se envio correctamente el correo");
+        handleNuevoCorreoAtras();
+      } else {
+        console.log("no se envio correctamente el correo");
+        alert("Error al enviar correo");
+      }
+      //
     });
 
     //regresa a la anterior pantalla
-    handleNuevoCorreoAtras();
   };
 
   const handleEditarTratamiento = (tratamiento) => {

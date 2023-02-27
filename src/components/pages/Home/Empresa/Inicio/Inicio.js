@@ -136,13 +136,8 @@ const Inicio = () => {
       //console.log("dataTratamientoTemporal: ", dataTratamientoTemporal);
       setMostrarInformacion("tratamiento");
 
-      //console.log("tratamiento", tratamiento);
-      const fechaFormateada = formatearFechaHtml(
-        tratamiento.consent.fechaFinConsentimeinto
-      );
-
-      //console.log("handleVerDatos fechaFormateada: ", fechaFormateada);
-      setFechaFin(fechaFormateada);
+      //setFechaFin(tratamiento.consent.fechaFinConsentimiento);
+      setFechaFin("11/12/2024");
     });
   };
 
@@ -349,12 +344,12 @@ const Inicio = () => {
                   <h3 className="form-label">
                     {tratamientoConstantes.lblFechaFin}
                   </h3>
-                  {console.log("fechaFin: ", fechaFin)}
+                  {console.log("fechaFin11: ", fechaFin)}
                   <input
                     className="form-control mb-3"
                     type={"date"}
-                    value={fechaFin}
-                    disable={true}
+                    value={formatearFechaHtml(fechaFin)}
+                    readOnly={true}
                   ></input>
                   {console.log(
                     "tratamientoSolicitado.consent.permisos: ",
