@@ -6,7 +6,7 @@ const Bloque = ({ item }) => {
 
   const handleComparar = () => {
     if (comparar !== "") {
-      if (comparar === item.hashEnterprise) {
+      if (comparar === item.hashMain) {
         setColor("form-control bg-success");
       } else {
         setColor("form-control bg-danger");
@@ -25,7 +25,7 @@ const Bloque = ({ item }) => {
     <div className=" bg-white rounded p-3 mb-2">
       <div>
         <label className="form-label">Hash:</label>
-        <div className={color}>{item.hashEnterprise}</div>
+        <div className={color}>{item.hashMain}</div>
         <label className="form-label mt-2">Hash Comparación:</label>
         <input
           className={color}
